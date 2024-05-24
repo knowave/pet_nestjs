@@ -22,7 +22,7 @@ export class UserController {
     return this.userService.createUser(createUserDto);
   }
 
-  @Get(':id')
+  @Get('profile')
   async getUser(@CurrentUser() user: User) {
     return await this.userService.getUser(user.id);
   }
