@@ -17,3 +17,9 @@ export const JWT_REFRESH_TOKEN_EXPIRATION_TIME =
 
 // PASSWORD Environment Variables
 export const SALT_ROUNDS = +process.env.SALT_ROUNDS;
+
+// AWS Environment Variables
+export const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
+export const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+export const AWS_S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME;
+export const AWS_REGION = process.env.AWS_REGION;
