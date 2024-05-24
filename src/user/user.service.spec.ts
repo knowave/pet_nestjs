@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { UserRepository } from './repo/user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 const mockRepository = () => ({
   save: jest.fn(),
@@ -67,7 +68,7 @@ describe('UserService', () => {
 
   describe('get user', () => {
     it('should get a user', async () => {
-      const userId = 1;
+      const userId = 'testUUID';
       const user: CreateUserDto = {
         email: 'test@test.com',
         username: 'test',
@@ -83,9 +84,32 @@ describe('UserService', () => {
     });
 
     it('should throw an error if the user does not exist', async () => {
-      const userId = 1;
+      const userId = 'testUUID';
       repository.getUserById.mockResolvedValue(null);
       await expect(service.getUser(userId)).rejects.toThrow();
+    });
+  });
+
+  describe('update user', () => {
+    it('should update a user', async () => {
+      const userId = 'testUUID1';
+      const updateUser: UpdateUserDto = {
+        email: 'test123@test.com',
+      };
+
+      repository.getUserById.mockResolvedValue({ id: userId });
+      const result = await service.updateUser(userId, updateUser);
+      expect(result).toEqual(true);
+    });
+
+    it('should throw an error if the user does not exist', async () => {
+      const userId = 'testUUID1';
+      const updateUser: UpdateUserDto = {
+        email: 'test1@test.com',
+      };
+
+      repository.getUserById.mockResolvedValue(null);
+      await expect(service.updateUser(userId, updateUser)).rejects.toThrow();
     });
   });
 });
