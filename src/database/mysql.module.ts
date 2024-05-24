@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   DATABASE_HOST,
@@ -27,14 +27,17 @@ import { DataSource } from 'typeorm';
   ],
 })
 export class MysqlModule implements OnModuleInit {
+  private readonly logger = new Logger(MysqlModule.name);
   constructor(private dataSource: DataSource) {}
 
   async onModuleInit() {
     try {
-      const database = await this.dataSource.initialize();
-      console.log(`Connected to database: ${database.options.database}`);
+      if (this.dataSource.isInitialized)
+        this.logger.log(
+          `Connected to database: ${this.dataSource.options.database}`,
+        );
     } catch (err) {
-      console.error('Failed to connect to database:', err);
+      this.logger.error('Failed to connect to database:', err);
     }
   }
 }
