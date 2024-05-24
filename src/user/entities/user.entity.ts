@@ -25,8 +25,8 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 20, comment: '사용자 닉네임' })
   @IsString()
   @IsNotEmpty({ message: '닉네임을 입력해주세요' })
-  @Matches(/^[가-힣a-zA-Z0-9]{2,20}$/, {
-    message: '닉네임은 한글, 영문, 숫자 2~20자로 입력해주세요',
+  @Matches(/^[가-힣a-zA-Z]{2,20}$/, {
+    message: '닉네임은 한글, 영문 2~20자로 입력해주세요',
   })
   nickname: string;
 
@@ -41,7 +41,7 @@ export class User extends BaseEntity {
   )
   password: string;
 
-  @Column({ type: 'varchar', length: 20, comment: '사용자 전화번호' })
+  @Column({ type: 'varchar', length: 100, comment: '사용자 전화번호' })
   @IsString()
   @IsNotEmpty({ message: '전화번호를 입력해주세요' })
   @Matches(/^\d{3}-\d{3,4}-\d{4}$/, {
@@ -52,7 +52,12 @@ export class User extends BaseEntity {
   @Column({ type: 'text', comment: '사용자 프로필 이미지', nullable: true })
   profileImage?: string;
 
-  @Column({ type: 'varchar', comment: '사용자 token', select: false })
+  @Column({
+    type: 'varchar',
+    comment: '사용자 token',
+    select: false,
+    nullable: true,
+  })
   token: string;
 
   @Column({ type: 'varchar', length: 100, comment: '사용자 소개글' })

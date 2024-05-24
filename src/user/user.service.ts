@@ -11,24 +11,37 @@ export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const { email, username, nickname, password, profileImage, introduction } =
-      createUserDto;
+    const {
+      email,
+      username,
+      nickname,
+      password,
+      phoneNumber,
+      profileImage,
+      introduction,
+    } = createUserDto;
 
     const existUser = await this.userRepository.getUserByEmail(email);
 
     if (existUser) throw new BadRequestException(ALREADY_EXIST_USER);
 
     const hashedPassword = await this.hashPassword(password);
-    return await this.userRepository.save(
+
+    const createdUser = await this.userRepository.save(
       new User({
         email,
         username,
         nickname,
         password: hashedPassword,
+        phoneNumber,
         profileImage,
         introduction,
       }),
     );
+
+    delete createdUser.password;
+    delete createdUser.token;
+    return createdUser;
   }
 
   private async hashPassword(password: string): Promise<string> {
