@@ -79,9 +79,13 @@ describe('UserService', () => {
 
       repository.getUserById.mockResolvedValue(user);
       const result = await service.getUser(userId);
-
-      console.log(result);
       expect(result).toEqual(user);
+    });
+
+    it('should throw an error if the user does not exist', async () => {
+      const userId = 1;
+      repository.getUserById.mockResolvedValue(null);
+      await expect(service.getUser(userId)).rejects.toThrow();
     });
   });
 });
