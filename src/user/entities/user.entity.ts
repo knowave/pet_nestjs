@@ -30,7 +30,7 @@ export class User extends BaseEntity {
   })
   nickname: string;
 
-  @Column({ type: 'varchar', comment: '사용자 비빌번호', select: false })
+  @Column({ type: 'varchar', comment: '사용자 비빌번호' })
   @IsNotEmpty({ message: '비밀번호를 입력해주세요' })
   @Matches(
     /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/,
@@ -55,7 +55,6 @@ export class User extends BaseEntity {
   @Column({
     type: 'varchar',
     comment: '사용자 token',
-    select: false,
     nullable: true,
   })
   token: string;

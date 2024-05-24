@@ -32,14 +32,6 @@ export class UserRepository {
       .getOne();
   }
 
-  async getUserByEmailForValidation(email: string): Promise<User> {
-    return await this.repository
-      .createQueryBuilder('user')
-      .addSelect('user.password')
-      .where('user.email = :email', { email })
-      .getOne();
-  }
-
   async getUserById(userId: string): Promise<User> {
     return await this.repository
       .createQueryBuilder('user')

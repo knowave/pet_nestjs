@@ -109,20 +109,19 @@ export class UserService {
     return user;
   }
 
-  async getUserByEmailForValidation(email: string): Promise<User> {
-    const user = await this.userRepository.getUserByEmailForValidation(email);
-
-    if (!user) throw new NotFoundException(NOT_FOUND_USER);
-
-    return user;
-  }
-
   async setCurrentRefreshToken(
     refreshToken: string,
     userId: string,
   ): Promise<User> {
     const user = await this.getUser(userId);
     user.token = refreshToken;
+    return await this.userRepository.save(user);
+  }
+
+  async removeRefreshToken(userId: string) {
+    const user = await this.getUser(userId);
+
+    user.token = null;
     return await this.userRepository.save(user);
   }
 

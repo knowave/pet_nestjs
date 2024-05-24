@@ -19,8 +19,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, plainTextPassword: string): Promise<any> {
-    const user = await this.userService.getUserByEmailForValidation(email);
+  async validateUser(id: string, plainTextPassword: string): Promise<any> {
+    const user = await this.userService.getUser(id);
     await this.verifyPassword(plainTextPassword, user.password);
 
     delete user.password;
@@ -28,10 +28,8 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto): Promise<LoginResponseDto> {
-    const user = await this.userService.getUserByEmailForValidation(
-      loginDto.email,
-    );
-    const result = await this.validateUser(loginDto.email, loginDto.password);
+    const user = await this.userService.getUserByEmail(loginDto.email);
+    const result = await this.validateUser(user.id, loginDto.password);
 
     if (!result) throw new BadRequestException(INVALID_AUTH_ERROR);
 
