@@ -27,13 +27,13 @@ export class UserController {
     return await this.userService.getUser(user.id);
   }
 
-  @Patch(':id')
+  @Patch()
   update(@CurrentUser() user: User, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.updateUser(user.id, updateUserDto);
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.userService.remove(+id);
-  // }
+  @Delete()
+  remove(@CurrentUser() user: User) {
+    return this.userService.deleteUser(user.id);
+  }
 }
