@@ -6,6 +6,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 const mockRepository = () => ({
   save: jest.fn(),
   getUserByEmail: jest.fn(),
+  getUserById: jest.fn(),
 });
 
 type MockRepository<T = any> = Partial<Record<keyof UserRepository, jest.Mock>>;
@@ -61,6 +62,26 @@ describe('UserService', () => {
 
       repository.getUserByEmail.mockResolvedValue(createUser);
       await expect(service.createUser(createUser)).rejects.toThrow();
+    });
+  });
+
+  describe('get user', () => {
+    it('should get a user', async () => {
+      const userId = 1;
+      const user: CreateUserDto = {
+        email: 'test@test.com',
+        username: 'test',
+        nickname: 'test',
+        password: 'test1234!',
+        phoneNumber: '010-1234-5678',
+        introduction: 'tester',
+      };
+
+      repository.getUserById.mockResolvedValue(user);
+      const result = await service.getUser(userId);
+
+      console.log(result);
+      expect(result).toEqual(user);
     });
   });
 });
