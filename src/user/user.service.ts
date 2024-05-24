@@ -56,6 +56,30 @@ export class UserService {
     return user;
   }
 
+  async updateUser(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<boolean> {
+    const {
+      email,
+      username,
+      nickname,
+      phoneNumber,
+      profileImage,
+      introduction,
+    } = updateUserDto;
+    const user = await this.getUser(userId);
+
+    user.email = email || user.email;
+    user.username = username || user.username;
+    user.nickname = nickname || user.nickname;
+    user.phoneNumber = phoneNumber || user.phoneNumber;
+    user.profileImage = profileImage || user.profileImage;
+    user.introduction = introduction || user.introduction;
+
+    return true;
+  }
+
   private async hashPassword(password: string): Promise<string> {
     return await bcrypt.hash(password, 10);
   }
