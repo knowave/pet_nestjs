@@ -9,6 +9,7 @@ import { UserRepository } from './repo/user.repository';
 import { ALREADY_EXIST_USER, NOT_FOUND_USER } from './error/user.error';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { SALT_ROUNDS } from 'src/common/env';
 
 @Injectable()
 export class UserService {
@@ -108,6 +109,14 @@ export class UserService {
     return user;
   }
 
+  async getUserByEmailForValidation(email: string): Promise<User> {
+    const user = await this.userRepository.getUserByEmailForValidation(email);
+
+    if (!user) throw new NotFoundException(NOT_FOUND_USER);
+
+    return user;
+  }
+
   async setCurrentRefreshToken(
     refreshToken: string,
     userId: string,
@@ -118,6 +127,6 @@ export class UserService {
   }
 
   private async hashPassword(password: string): Promise<string> {
-    return await bcrypt.hash(password, 10);
+    return await bcrypt.hash(password, SALT_ROUNDS);
   }
 }

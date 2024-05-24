@@ -9,6 +9,8 @@ import {
   JWT_REFRESH_TOKEN_EXPIRATION_TIME,
   JWT_REFRESH_TOKEN_SECRET,
 } from 'src/common/env';
+import { LoginDto } from './dto/login.dto';
+import { LoginResponseDto } from './dto/login-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,11 +20,43 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, plainTextPassword: string): Promise<any> {
-    const user = await this.userService.getUserByEmail(email);
+    const user = await this.userService.getUserByEmailForValidation(email);
     await this.verifyPassword(plainTextPassword, user.password);
 
     delete user.password;
     return user;
+  }
+
+  async login(loginDto: LoginDto): Promise<LoginResponseDto> {
+    const user = await this.userService.getUserByEmailForValidation(
+      loginDto.email,
+    );
+    const result = await this.validateUser(loginDto.email, loginDto.password);
+
+    if (!result) throw new BadRequestException(INVALID_AUTH_ERROR);
+
+    const accessToken = this.createAccessToken(user.id);
+    const refreshToken = this.createRefreshToken(user.id);
+
+    await this.userService.setCurrentRefreshToken(refreshToken, user.id);
+    return { accessToken, refreshToken };
+  }
+
+  private createAccessToken(id: string) {
+    const payload = { id };
+
+    return this.jwtService.sign(payload, {
+      secret: JWT_ACCESS_TOKEN_SECRET,
+      expiresIn: JWT_ACCESS_TOKEN_EXPIRATION_TIME,
+    });
+  }
+
+  private createRefreshToken(id: string) {
+    const payload = { id };
+    return this.jwtService.sign(payload, {
+      secret: JWT_REFRESH_TOKEN_SECRET,
+      expiresIn: JWT_REFRESH_TOKEN_EXPIRATION_TIME,
+    });
   }
 
   private async verifyPassword(
@@ -37,22 +71,5 @@ export class AuthService {
     if (!isPasswordMatch) {
       throw new BadRequestException(INVALID_AUTH_ERROR);
     }
-  }
-
-  createAccessToken(id: string) {
-    const payload = { id };
-
-    return this.jwtService.sign(payload, {
-      secret: JWT_ACCESS_TOKEN_SECRET,
-      expiresIn: JWT_ACCESS_TOKEN_EXPIRATION_TIME,
-    });
-  }
-
-  createRefreshToken(id: string) {
-    const payload = { id };
-    return this.jwtService.sign(payload, {
-      secret: JWT_REFRESH_TOKEN_SECRET,
-      expiresIn: JWT_REFRESH_TOKEN_EXPIRATION_TIME,
-    });
   }
 }
