@@ -1,8 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './repo/user.repository';
-import { ALREADY_EXIST_USER } from './error/user.error';
+import { ALREADY_EXIST_USER, NOT_FOUND_USER } from './error/user.error';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
@@ -42,6 +46,14 @@ export class UserService {
     delete createdUser.password;
     delete createdUser.token;
     return createdUser;
+  }
+
+  async getUser(userId: number): Promise<User> {
+    const user = await this.userRepository.getUserById(userId);
+
+    if (!user) throw new NotFoundException(NOT_FOUND_USER);
+
+    return user;
   }
 
   private async hashPassword(password: string): Promise<string> {
