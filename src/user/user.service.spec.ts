@@ -48,5 +48,19 @@ describe('UserService', () => {
       const result = await service.createUser(createUser);
       expect(result).toEqual(createUser);
     });
+
+    it('should throw an error if the user already exists', async () => {
+      const createUser: CreateUserDto = {
+        email: 'test@test.com',
+        username: 'test',
+        nickname: 'test',
+        password: 'test1234!',
+        phoneNumber: '010-1234-5678',
+        introduction: 'tester',
+      };
+
+      repository.getUserByEmail.mockResolvedValue(createUser);
+      await expect(service.createUser(createUser)).rejects.toThrow();
+    });
   });
 });
