@@ -80,6 +80,13 @@ export class UserService {
     return true;
   }
 
+  async deleteUser(userId: string): Promise<boolean> {
+    const user = await this.getUser(userId);
+
+    await this.userRepository.softRemove(user);
+    return true;
+  }
+
   private async hashPassword(password: string): Promise<string> {
     return await bcrypt.hash(password, 10);
   }

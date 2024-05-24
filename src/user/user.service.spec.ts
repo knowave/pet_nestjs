@@ -8,6 +8,7 @@ const mockRepository = () => ({
   save: jest.fn(),
   getUserByEmail: jest.fn(),
   getUserById: jest.fn(),
+  softRemove: jest.fn(),
 });
 
 type MockRepository<T = any> = Partial<Record<keyof UserRepository, jest.Mock>>;
@@ -110,6 +111,24 @@ describe('UserService', () => {
 
       repository.getUserById.mockResolvedValue(null);
       await expect(service.updateUser(userId, updateUser)).rejects.toThrow();
+    });
+  });
+
+  describe('delete user', () => {
+    it('should delete a user', async () => {
+      const userId = 'test';
+
+      repository.getUserById.mockResolvedValue({ id: userId });
+      repository.softRemove.mockResolvedValue({ id: userId });
+      const result = await service.deleteUser(userId);
+      expect(result).toEqual(true);
+    });
+
+    it('should throw an error if the user does not exist', async () => {
+      const userId = 'test';
+
+      repository.getUserById.mockResolvedValue(null);
+      await expect(service.deleteUser(userId)).rejects.toThrow();
     });
   });
 });
