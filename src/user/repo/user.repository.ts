@@ -24,4 +24,11 @@ export class UserRepository {
   async bulkSoftRemove(users: User[]): Promise<User[]> {
     return await this.repository.softRemove(users);
   }
+
+  async getUserByEmail(email: string): Promise<User> {
+    return await this.repository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email })
+      .getOne();
+  }
 }
