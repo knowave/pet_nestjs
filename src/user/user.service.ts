@@ -108,6 +108,15 @@ export class UserService {
     return user;
   }
 
+  async setCurrentRefreshToken(
+    refreshToken: string,
+    userId: string,
+  ): Promise<User> {
+    const user = await this.getUser(userId);
+    user.token = refreshToken;
+    return await this.userRepository.save(user);
+  }
+
   private async hashPassword(password: string): Promise<string> {
     return await bcrypt.hash(password, 10);
   }
