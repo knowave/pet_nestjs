@@ -20,14 +20,14 @@ export class UserController {
     return this.userService.createUser(createUserDto);
   }
 
+  @Get(':id')
+  async getUser(@Param('id') id: string) {
+    return await this.userService.getUser(+id);
+  }
+
   // @Get()
   // findAll() {
   //   return this.userService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.userService.findOne(+id);
   // }
 
   // @Patch(':id')
