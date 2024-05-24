@@ -16,4 +16,16 @@ export class S3Service {
       region: process.env.AWS_REGION,
     });
   }
+
+  async getObject(
+    key: string,
+    bucket?: string,
+  ): Promise<S3.Types.GetObjectOutput> {
+    return await this.s3
+      .getObject({
+        Bucket: bucket || this.defaultBucket,
+        Key: key,
+      })
+      .promise();
+  }
 }
