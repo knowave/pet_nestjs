@@ -31,4 +31,11 @@ export class UserRepository {
       .where('user.email = :email', { email })
       .getOne();
   }
+
+  async getUserById(userId: string): Promise<User> {
+    return await this.repository
+      .createQueryBuilder('user')
+      .where('user.id = :userId', { userId })
+      .getOne();
+  }
 }
