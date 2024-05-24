@@ -87,6 +87,27 @@ export class UserService {
     return true;
   }
 
+  async getUserIfRefreshTokenMatches(refreshToken: string, userId: string) {
+    const user = await this.getUser(userId);
+
+    const isRefreshTokenMatching = await bcrypt.compare(
+      refreshToken,
+      user.token,
+    );
+
+    if (isRefreshTokenMatching) {
+      return user;
+    }
+  }
+
+  async getUserByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.getUserByEmail(email);
+
+    if (!user) throw new NotFoundException(NOT_FOUND_USER);
+
+    return user;
+  }
+
   private async hashPassword(password: string): Promise<string> {
     return await bcrypt.hash(password, 10);
   }
