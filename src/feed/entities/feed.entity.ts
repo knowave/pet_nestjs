@@ -1,7 +1,8 @@
 import { IsNotEmpty } from 'class-validator';
+import { Comment } from 'src/comment/entities/comment.entity';
 import { BaseEntity } from 'src/common/base.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class Feed extends BaseEntity {
@@ -21,4 +22,10 @@ export class Feed extends BaseEntity {
     onUpdate: 'CASCADE',
   })
   user: User;
+
+  @OneToMany(() => Comment, (comment) => comment.feed, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  comments: Comment[];
 }

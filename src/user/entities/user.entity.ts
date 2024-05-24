@@ -1,6 +1,8 @@
 import { IsEmail, IsNotEmpty, IsString, Matches } from 'class-validator';
+import { Comment } from 'src/comment/entities/comment.entity';
 import { BaseEntity } from 'src/common/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Feed } from 'src/feed/entities/feed.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity()
 export class User extends BaseEntity {
@@ -61,4 +63,19 @@ export class User extends BaseEntity {
 
   @Column({ type: 'varchar', length: 100, comment: '사용자 소개글' })
   introduction: string;
+
+  @Column({ type: 'boolean', comment: '사용자 탈퇴 여부', default: false })
+  isDeleted: boolean;
+
+  @OneToMany(() => Feed, (feed) => feed.user, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  feeds: Feed[];
+
+  @OneToMany(() => Comment, (comment) => comment.user, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  comments: Comment[];
 }
