@@ -63,7 +63,7 @@ describe('FeedService', () => {
       });
 
       repository.getFeedByFeedIdAndUserId.mockResolvedValue(feed);
-      const result = await service.getMyFeed(feed.id, user.id);
+      const result = await service.getFeed(feed.id, user.id);
 
       expect(result.id).toEqual(feed.id);
       expect(result.user).toEqual(user);
@@ -75,7 +75,7 @@ describe('FeedService', () => {
 
       repository.getFeedByFeedIdAndUserId.mockResolvedValue(undefined);
 
-      await expect(service.getMyFeed(feedId, user.id)).rejects.toEqual(
+      await expect(service.getFeed(feedId, user.id)).rejects.toEqual(
         expect.objectContaining({
           status: 404,
           response: {
