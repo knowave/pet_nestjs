@@ -28,7 +28,7 @@ export class FeedService {
     return `This action returns all feed`;
   }
 
-  async getMyFeed(feedId: string, userId: string): Promise<Feed> {
+  async getFeed(feedId: string, userId: string): Promise<Feed> {
     const feed = await this.feedRepository.getFeedByFeedIdAndUserId(
       feedId,
       userId,

@@ -12,6 +12,7 @@ import { CreateFeedDto } from './dto/create-feed.dto';
 import { UpdateFeedDto } from './dto/update-feed.dto';
 import { CurrentUser } from 'src/user/user.decorator';
 import { User } from 'src/user/entities/user.entity';
+import { Feed } from './entities/feed.entity';
 
 @Controller('feed')
 export class FeedController {
@@ -21,13 +22,24 @@ export class FeedController {
   async createFeed(
     @Body() createFeedDto: CreateFeedDto,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<boolean> {
     return await this.feedService.createFeed(createFeedDto, user);
   }
 
-  @Get('/my/feed/:feedId')
-  async findOne(@Param('feedId') feedId: string, @CurrentUser() user: User) {
-    return await this.feedService.getMyFeed(feedId, user.id);
+  @Get('/my/:feedId')
+  async getMyFeed(
+    @Param('feedId') feedId: string,
+    @CurrentUser() user: User,
+  ): Promise<Feed> {
+    return await this.feedService.getFeed(feedId, user.id);
+  }
+
+  @Get('/:feedId/:userId')
+  async getFeed(
+    @Param('feedId') feedId: string,
+    @Param('userId') userId: string,
+  ): Promise<Feed> {
+    return await this.feedService.getFeed(feedId, userId);
   }
 
   @Get()
