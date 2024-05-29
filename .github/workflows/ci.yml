@@ -1,0 +1,44 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Use Node.js and Yarn
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+          cache: 'yarn'
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run tests
+        run: yarn test:cov
+
+      - name: Check test coverage
+        run: |
+          coverage=$(npm run coverage | grep -Eo '[0-9]+\.[0-9]+%')
+          echo "Test coverage: $coverage"
+          if (( $(echo "$coverage >= 80" | bc -l) )); then
+            echo "Test coverage is above 80%, pushing changes..."
+            git push origin main
+          else
+            echo "Test coverage is below 80%, not pushing changes."
+          fi
+        shell: bash
