@@ -5,10 +5,12 @@ import { User } from 'src/user/entities/user.entity';
 import { CreateFeedDto } from './dto/create-feed.dto';
 import { Feed } from './entities/feed.entity';
 import { FEED_NOT_FOUND } from './error/feed.error';
+import { NotFoundException } from '@nestjs/common';
 
 const mockRepository = () => ({
   save: jest.fn(),
   getFeedByFeedIdAndUserId: jest.fn(),
+  getFeedByFeedIdAndIsPublic: jest.fn(),
 });
 
 type MockRepository<T = any> = Partial<Record<keyof FeedRepository, jest.Mock>>;
@@ -84,6 +86,47 @@ describe('FeedService', () => {
             message: FEED_NOT_FOUND.message,
           },
         }),
+      );
+    });
+  });
+
+  describe('get public feed', () => {
+    it('공개된 Feed를 조회한다.', async () => {
+      const user = new User({ id: 'user_uuid', email: 'test@test.com' });
+      const feed = new Feed({
+        id: 'feed_uuid',
+        content: 'test content',
+        title: 'test title',
+        isPublic: true,
+        user,
+      });
+
+      repository.getFeedByFeedIdAndIsPublic.mockResolvedValue(feed);
+      const result = await service.getPublicFeed(feed.id);
+
+      expect(result.id).toEqual(feed.id);
+      expect(result.isPublic).toEqual(true);
+    });
+
+    it('feed의 isPublic이 false인 경우 에러를 반환한다.', async () => {
+      const user = new User({ id: 'user_uuid', email: 'email@email.com' });
+      const feed = new Feed({
+        id: 'feed_uuid',
+        content: 'test content',
+        title: 'test title',
+        isPublic: false,
+        user,
+      });
+
+      repository.getFeedByFeedIdAndIsPublic.mockImplementation(async () => {
+        if (feed.isPublic) {
+          return feed;
+        }
+        return undefined;
+      });
+
+      await expect(service.getPublicFeed(feed.id)).rejects.toThrow(
+        new NotFoundException(FEED_NOT_FOUND),
       );
     });
   });
