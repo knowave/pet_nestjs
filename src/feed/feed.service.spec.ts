@@ -4,7 +4,6 @@ import { FeedRepository } from './repo/feed.repository';
 import { User } from 'src/user/entities/user.entity';
 import { CreateFeedDto } from './dto/create-feed.dto';
 import { Feed } from './entities/feed.entity';
-import { NotFoundException } from '@nestjs/common';
 import { FEED_NOT_FOUND } from './error/feed.error';
 
 const mockRepository = () => ({
