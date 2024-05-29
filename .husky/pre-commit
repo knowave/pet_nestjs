@@ -1,4 +1,13 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npx lint-staged
+yarn lint-staged
+
+# yarn test:cov
+# sleep 60
+# coverage_percentage=$(node -e "console.log(require('../coverage/coverage-final.json').total.lines.pct)")
+
+# if [ "$coverage_percentage" -lt 80 ]; then
+#   echo "Error: Test coverage is below 80% ($coverage_percentage%). Please increase test coverage before committing."
+#   exit 1
+# fi
