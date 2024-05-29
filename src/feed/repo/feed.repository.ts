@@ -12,4 +12,16 @@ export class FeedRepository {
   async save(feed: Feed): Promise<Feed> {
     return await this.repository.save(feed);
   }
+
+  async getFeedByFeedIdAndUserId(
+    feedId: string,
+    userId: string,
+  ): Promise<Feed> {
+    return await this.repository
+      .createQueryBuilder('feed')
+      .innerJoin('feed.user', 'user')
+      .where('feed.id = :feedId', { feedId })
+      .andWhere('feed.userId = :userId', { userId })
+      .getOne();
+  }
 }
