@@ -28,11 +28,19 @@ export class FeedService {
     return `This action returns all feed`;
   }
 
-  async getFeed(feedId: string, userId: string): Promise<Feed> {
+  async getMyFeed(feedId: string, userId: string): Promise<Feed> {
     const feed = await this.feedRepository.getFeedByFeedIdAndUserId(
       feedId,
       userId,
     );
+
+    if (!feed) throw new NotFoundException(FEED_NOT_FOUND);
+
+    return feed;
+  }
+
+  async getPublicFeed(feedId: string): Promise<Feed> {
+    const feed = await this.feedRepository.getFeedByFeedIdAndIsPublic(feedId);
 
     if (!feed) throw new NotFoundException(FEED_NOT_FOUND);
 

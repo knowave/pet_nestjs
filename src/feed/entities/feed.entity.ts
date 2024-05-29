@@ -17,6 +17,9 @@ export class Feed extends BaseEntity {
   @IsNotEmpty({ message: '내용을 입력해주세요' })
   content: string;
 
+  @Column({ type: 'boolean', default: true, comment: '공개 여부' })
+  isPublic: boolean;
+
   @ManyToOne(() => User, (user) => user.feeds, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',

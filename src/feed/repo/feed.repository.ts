@@ -19,9 +19,18 @@ export class FeedRepository {
   ): Promise<Feed> {
     return await this.repository
       .createQueryBuilder('feed')
-      .innerJoin('feed.user', 'user')
+      .innerJoinAndSelect('feed.user', 'user')
       .where('feed.id = :feedId', { feedId })
       .andWhere('feed.userId = :userId', { userId })
+      .getOne();
+  }
+
+  async getFeedByFeedIdAndIsPublic(feedId: string): Promise<Feed> {
+    return await this.repository
+      .createQueryBuilder('feed')
+      .innerJoinAndSelect('feed.user', 'user')
+      .where('feed.id = :feedId', { feedId })
+      .andWhere('feed.isPublic = true')
       .getOne();
   }
 }

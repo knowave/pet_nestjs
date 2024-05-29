@@ -31,15 +31,12 @@ export class FeedController {
     @Param('feedId') feedId: string,
     @CurrentUser() user: User,
   ): Promise<Feed> {
-    return await this.feedService.getFeed(feedId, user.id);
+    return await this.feedService.getMyFeed(feedId, user.id);
   }
 
-  @Get('/:feedId/:userId')
-  async getFeed(
-    @Param('feedId') feedId: string,
-    @Param('userId') userId: string,
-  ): Promise<Feed> {
-    return await this.feedService.getFeed(feedId, userId);
+  @Get('/:feedId')
+  async getPublicFeed(@Param('feedId') feedId: string): Promise<Feed> {
+    return await this.feedService.getPublicFeed(feedId);
   }
 
   @Get()

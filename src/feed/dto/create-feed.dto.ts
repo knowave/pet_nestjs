@@ -5,4 +5,5 @@ export class CreateFeedDto extends PickType(Feed, [
   'content',
   'thumbnail',
   'title',
+  'isPublic',
 ]) {}
