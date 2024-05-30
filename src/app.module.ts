@@ -9,6 +9,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { FeedModule } from './feed/feed.module';
 import { CommentModule } from './comment/comment.module';
+import { FollowModule } from './follow/follow.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CommentModule } from './comment/comment.module';
     AuthModule,
     FeedModule,
     CommentModule,
+    FollowModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
