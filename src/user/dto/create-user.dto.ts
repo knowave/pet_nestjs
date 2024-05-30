@@ -6,6 +6,8 @@ export class CreateUserDto extends OmitType(User, [
   'isDeleted',
   'feeds',
   'comments',
+  'followers',
+  'followings',
   'id',
   'createdAt',
   'deletedAt',

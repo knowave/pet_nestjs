@@ -2,6 +2,7 @@ import { IsEmail, IsNotEmpty, IsString, Matches } from 'class-validator';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { BaseEntity } from 'src/common/base.entity';
 import { Feed } from 'src/feed/entities/feed.entity';
+import { Follow } from 'src/follow/entities/follow.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity()
@@ -78,4 +79,16 @@ export class User extends BaseEntity {
     onUpdate: 'CASCADE',
   })
   comments: Comment[];
+
+  @OneToMany(() => Follow, (follow) => follow.follower, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  followers: Follow[];
+
+  @OneToMany(() => Follow, (follow) => follow.following, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  followings: Follow[];
 }
