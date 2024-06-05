@@ -39,9 +39,9 @@ export class FeedController {
     return await this.feedService.getPublicFeed(feedId);
   }
 
-  @Get()
-  findAll() {
-    return this.feedService.findAll();
+  @Post('/:feedId/view')
+  async incrementViewCount(@Param('feedId') feedId: string): Promise<boolean> {
+    return await this.feedService.incrementViewCount(feedId);
   }
 
   @Patch(':id')

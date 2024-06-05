@@ -47,6 +47,15 @@ export class FeedService {
     return feed;
   }
 
+  async incrementViewCount(feedId: string): Promise<boolean> {
+    const feed = await this.feedRepository.getFeedByFeedIdAndIsPublic(feedId);
+
+    if (!feed) throw new NotFoundException(FEED_NOT_FOUND);
+
+    await this.feedRepository.increment(feedId);
+    return true;
+  }
+
   update(id: number, updateFeedDto: UpdateFeedDto) {
     return `This action updates a #${id} feed`;
   }
