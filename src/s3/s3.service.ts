@@ -40,4 +40,20 @@ export class S3Service {
       })
       .promise();
   }
+
+  async uploadObject(
+    key: string,
+    body: S3.Body,
+    contentType?: string,
+    bucket?: string,
+  ): Promise<S3.ManagedUpload.SendData> {
+    return await this.s3
+      .upload({
+        Key: key,
+        Body: body,
+        ContentType: contentType,
+        Bucket: bucket || this.defaultBucket,
+      })
+      .promise();
+  }
 }
