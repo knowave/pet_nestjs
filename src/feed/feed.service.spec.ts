@@ -8,6 +8,7 @@ import { FEED_NOT_FOUND } from './error/feed.error';
 import { NotFoundException } from '@nestjs/common';
 import { faker } from '@faker-js/faker';
 import { RedisService } from 'src/database/redis/redis.service';
+import { subDays } from 'date-fns';
 
 const mockRepository = () => ({
   save: jest.fn(),
@@ -206,6 +207,32 @@ describe('FeedService', () => {
       const result = await service.topTenFeeds();
 
       expect(result[0]).toEqual(feeds[0]);
+    });
+
+    it('조회수가 높은 상위 10개의 Feed를 조회할 때 viewCount가 같다면 createdAt 내림차순으로 정렬한다.', async () => {
+      const feeds = JSON.parse(
+        JSON.stringify(
+          Array.from({ length: 10 }, (_, i) => {
+            return new Feed({
+              id: faker.string.uuid(),
+              title: faker.lorem.sentence(),
+              content: faker.lorem.paragraph(),
+              viewCount: 100,
+              createdAt: subDays(faker.date.anytime(), i),
+            });
+          }),
+        ),
+      );
+
+      const sortedFeeds = feeds.sort((a, b) => b.createdAt - a.createdAt);
+
+      repository.getTopTenFeedsAndSortViewCount.mockResolvedValue(sortedFeeds);
+
+      redisService.get.mockResolvedValue(JSON.stringify(feeds));
+      redisService.set.mockResolvedValue(JSON.stringify(feeds));
+
+      const result = await service.topTenFeeds();
+      expect(result[0]).toEqual(sortedFeeds[0]);
     });
   });
 });
