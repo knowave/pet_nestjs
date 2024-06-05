@@ -49,7 +49,7 @@ export class FeedController {
     return await this.feedService.topTenFeeds();
   }
 
-  @Patch(':feedId')
+  @Patch('/:feedId')
   async updateFeed(
     @Param('feedId') feedId: string,
     @Body() updateFeedDto: UpdateFeedDto,
@@ -58,8 +58,11 @@ export class FeedController {
     return await this.feedService.updateFeed(feedId, updateFeedDto, user.id);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.feedService.remove(+id);
+  @Delete('/:feedId')
+  async removeFeed(
+    @Param('feedId') feedId: string,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    return await this.feedService.removeFeed(feedId, user.id);
   }
 }

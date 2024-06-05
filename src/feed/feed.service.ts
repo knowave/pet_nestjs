@@ -93,7 +93,8 @@ export class FeedService {
     return true;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} feed`;
+  async removeFeed(feedId: string, userId: string): Promise<boolean> {
+    await this.feedRepository.softRemove(feedId, userId);
+    return true;
   }
 }

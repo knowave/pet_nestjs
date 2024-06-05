@@ -47,4 +47,8 @@ export class FeedRepository {
       .limit(10)
       .getMany();
   }
+
+  async softRemove(feedId: string, userId: string): Promise<void> {
+    await this.repository.softDelete({ id: feedId, user: { id: userId } });
+  }
 }
