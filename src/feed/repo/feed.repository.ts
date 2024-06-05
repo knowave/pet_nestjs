@@ -33,4 +33,8 @@ export class FeedRepository {
       .andWhere('feed.isPublic = true')
       .getOne();
   }
+
+  async increment(feedId: string): Promise<void> {
+    await this.repository.increment({ id: feedId }, 'viewCount', 1);
+  }
 }
