@@ -42,7 +42,7 @@ export class FeedRepository {
     return await this.repository
       .createQueryBuilder('feed')
       .where('user.isPublic = true')
-      .orderBy('feed.viewCount', 'ASC')
+      .orderBy('feed.viewCount', 'DESC')
       .addOrderBy('feed.createdAt', 'DESC')
       .limit(10)
       .getMany();
