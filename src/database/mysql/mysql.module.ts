@@ -22,7 +22,7 @@ import { DataSource } from 'typeorm';
       migrations: [__dirname + 'migrations/*{.ts}'],
       synchronize: true,
       migrationsRun: false,
-      logging: true,
+      logging: process.env.NODE_ENV === 'prod' ? true : false,
     }),
   ],
 })
