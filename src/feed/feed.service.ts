@@ -71,8 +71,26 @@ export class FeedService {
     return feeds;
   }
 
-  update(id: number, updateFeedDto: UpdateFeedDto) {
-    return `This action updates a #${id} feed`;
+  async updateFeed(
+    feedId: string,
+    updateFeedDto: UpdateFeedDto,
+    userId: string,
+  ): Promise<boolean> {
+    const { content, title, thumbnail, isPublic } = updateFeedDto;
+
+    const feed = await this.feedRepository.getFeedByFeedIdAndUserId(
+      feedId,
+      userId,
+    );
+
+    if (!feed) throw new NotFoundException(FEED_NOT_FOUND);
+
+    feed.content = content;
+    feed.title = title;
+    feed.thumbnail = thumbnail;
+    feed.isPublic = isPublic;
+
+    return true;
   }
 
   remove(id: number) {

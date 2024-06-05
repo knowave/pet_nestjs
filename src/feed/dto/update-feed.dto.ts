@@ -1,4 +1,9 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateFeedDto } from './create-feed.dto';
+import { PickType } from '@nestjs/mapped-types';
+import { Feed } from '../entities/feed.entity';
 
-export class UpdateFeedDto extends PartialType(CreateFeedDto) {}
+export class UpdateFeedDto extends PickType(Feed, [
+  'content',
+  'title',
+  'thumbnail',
+  'isPublic',
+]) {}

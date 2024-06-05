@@ -49,9 +49,13 @@ export class FeedController {
     return await this.feedService.topTenFeeds();
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFeedDto: UpdateFeedDto) {
-    return this.feedService.update(+id, updateFeedDto);
+  @Patch(':feedId')
+  async updateFeed(
+    @Param('feedId') feedId: string,
+    @Body() updateFeedDto: UpdateFeedDto,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    return await this.feedService.updateFeed(feedId, updateFeedDto, user.id);
   }
 
   @Delete(':id')
