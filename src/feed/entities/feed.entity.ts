@@ -20,6 +20,9 @@ export class Feed extends BaseEntity {
   @Column({ type: 'boolean', default: true, comment: '공개 여부' })
   isPublic: boolean;
 
+  @Column({ type: 'int', default: 0, comment: '조회수' })
+  viewCount: number;
+
   @ManyToOne(() => User, (user) => user.feeds, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
