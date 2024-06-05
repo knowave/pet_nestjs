@@ -28,4 +28,16 @@ export class S3Service {
       })
       .promise();
   }
+
+  async deleteObject(
+    key: string,
+    bucket?: string,
+  ): Promise<S3.DeleteObjectOutput> {
+    return await this.s3
+      .deleteObject({
+        Bucket: bucket || this.defaultBucket,
+        Key: key,
+      })
+      .promise();
+  }
 }
