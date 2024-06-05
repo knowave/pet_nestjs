@@ -2,6 +2,7 @@ import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { InjectRedis, RedisModule } from '@liaoliaots/nestjs-redis';
 import { REDIS_HOST, REDIS_PORT } from 'src/common/env';
 import { Redis } from 'ioredis';
+import { RedisService } from './redis.service';
 
 @Module({
   imports: [
@@ -12,6 +13,8 @@ import { Redis } from 'ioredis';
       },
     }),
   ],
+  providers: [RedisService],
+  exports: [RedisService],
 })
 export class RedisConfigModule implements OnModuleInit {
   private readonly logger = new Logger(RedisConfigModule.name);
