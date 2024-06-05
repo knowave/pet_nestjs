@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UploadedFile,
 } from '@nestjs/common';
 import { FeedService } from './feed.service';
 import { CreateFeedDto } from './dto/create-feed.dto';
@@ -52,9 +53,16 @@ export class FeedController {
   @Patch('/:feedId')
   async updateFeed(
     @Param('feedId') feedId: string,
+    @UploadedFile() thumbnail: Express.Multer.File,
     @Body() updateFeedDto: UpdateFeedDto,
     @CurrentUser() user: User,
   ): Promise<boolean> {
+    updateFeedDto.thumbnail = {
+      fileName: thumbnail.originalname,
+      mimeType: thumbnail.mimetype,
+      fileContent: thumbnail.buffer,
+    };
+
     return await this.feedService.updateFeed(feedId, updateFeedDto, user.id);
   }
 

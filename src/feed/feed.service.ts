@@ -6,12 +6,15 @@ import { FeedRepository } from './repo/feed.repository';
 import { Feed } from './entities/feed.entity';
 import { FEED_NOT_FOUND } from './error/feed.error';
 import { RedisService } from 'src/database/redis/redis.service';
+import { S3Service } from 'src/s3/s3.service';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class FeedService {
   constructor(
     private readonly feedRepository: FeedRepository,
     private readonly redisService: RedisService,
+    private readonly s3service: S3Service,
   ) {}
 
   async createFeed(createFeedDto: CreateFeedDto, user: User): Promise<boolean> {
@@ -85,16 +88,44 @@ export class FeedService {
 
     if (!feed) throw new NotFoundException(FEED_NOT_FOUND);
 
+    if (thumbnail) {
+      if (feed.thumbnail) {
+        const urlArr = feed.thumbnail.split('/');
+        const fileName = urlArr.slice(-1)[0];
+        await this.s3service.deleteObject(fileName);
+      }
+
+      const { fileName, mimeType, fileContent } = thumbnail;
+      const newFileName = `${uuid()}-${fileName}`;
+
+      const uploadedFile = await this.s3service.uploadObject(
+        newFileName,
+        fileContent,
+        mimeType,
+      );
+
+      feed.thumbnail = uploadedFile.Location;
+    }
+
     feed.content = content;
     feed.title = title;
-    feed.thumbnail = thumbnail;
     feed.isPublic = isPublic;
 
+    await this.feedRepository.save(feed);
     return true;
   }
 
   async removeFeed(feedId: string, userId: string): Promise<boolean> {
-    await this.feedRepository.softRemove(feedId, userId);
+    const feed = await this.feedRepository.getFeedByFeedIdAndUserId(
+      feedId,
+      userId,
+    );
+
+    const urlArr = feed.thumbnail.split('/');
+    const fileName = urlArr.slice(-1)[0];
+
+    await this.s3service.deleteObject(fileName);
+    await this.feedRepository.softRemove(feedId);
     return true;
   }
 }
