@@ -18,7 +18,7 @@ import { DataSource } from 'typeorm';
       username: DATABASE_USER,
       password: DATABASE_PASSWORD,
       database: DATABASE_NAME,
-      entities: [__dirname + '../../**/entities/*.entity{.ts,.js}'],
+      entities: [__dirname + '../../../**/entities/*.entity{.ts,.js}'],
       migrations: [__dirname + 'migrations/*{.ts}'],
       synchronize: true,
       migrationsRun: false,
