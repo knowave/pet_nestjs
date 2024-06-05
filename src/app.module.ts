@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { FeedModule } from './feed/feed.module';
 import { CommentModule } from './comment/comment.module';
 import { FollowModule } from './follow/follow.module';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { FollowModule } from './follow/follow.module';
       envFilePath: '.env',
     }),
     MysqlModule,
+    RedisModule,
     UserModule,
     AuthModule,
     FeedModule,
