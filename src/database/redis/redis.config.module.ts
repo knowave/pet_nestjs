@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
-import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { Logger, Module, OnModuleInit } from '@nestjs/common';
+import { InjectRedis, RedisModule } from '@liaoliaots/nestjs-redis';
 import { REDIS_HOST, REDIS_PORT } from 'src/common/env';
+import { Redis } from 'ioredis';
 
 @Module({
   imports: [
@@ -12,4 +13,16 @@ import { REDIS_HOST, REDIS_PORT } from 'src/common/env';
     }),
   ],
 })
-export class RedisConfigModule {}
+export class RedisConfigModule implements OnModuleInit {
+  private readonly logger = new Logger(RedisConfigModule.name);
+  constructor(@InjectRedis() private readonly redis: Redis) {}
+
+  async onModuleInit() {
+    try {
+      await this.redis.ping();
+      this.logger.log('Redis module connected');
+    } catch (err) {
+      this.logger.error('Failed to connect to Redis:', err);
+    }
+  }
+}
