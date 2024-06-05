@@ -26,6 +26,11 @@ export class FeedController {
     return await this.feedService.createFeed(createFeedDto, user);
   }
 
+  @Post('/:feedId/view')
+  async incrementViewCount(@Param('feedId') feedId: string): Promise<boolean> {
+    return await this.feedService.incrementViewCount(feedId);
+  }
+
   @Get('/my/:feedId')
   async getMyFeed(
     @Param('feedId') feedId: string,
@@ -39,9 +44,9 @@ export class FeedController {
     return await this.feedService.getPublicFeed(feedId);
   }
 
-  @Post('/:feedId/view')
-  async incrementViewCount(@Param('feedId') feedId: string): Promise<boolean> {
-    return await this.feedService.incrementViewCount(feedId);
+  @Get('/top-ten')
+  async topTenFeeds(): Promise<Feed[]> {
+    return await this.feedService.topTenFeeds();
   }
 
   @Patch(':id')

@@ -37,4 +37,14 @@ export class FeedRepository {
   async increment(feedId: string): Promise<void> {
     await this.repository.increment({ id: feedId }, 'viewCount', 1);
   }
+
+  async getTopTenFeedsAndSortViewCount(): Promise<Feed[]> {
+    return await this.repository
+      .createQueryBuilder('feed')
+      .where('user.isPublic = true')
+      .orderBy('feed.viewCount', 'ASC')
+      .addOrderBy('feed.createdAt', 'DESC')
+      .limit(10)
+      .getMany();
+  }
 }
