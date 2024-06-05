@@ -11,6 +11,7 @@ const mockRepository = () => ({
   save: jest.fn(),
   getFeedByFeedIdAndUserId: jest.fn(),
   getFeedByFeedIdAndIsPublic: jest.fn(),
+  increment: jest.fn(),
 });
 
 type MockRepository<T = any> = Partial<Record<keyof FeedRepository, jest.Mock>>;
@@ -127,6 +128,39 @@ describe('FeedService', () => {
 
       await expect(service.getPublicFeed(feed.id)).rejects.toThrow(
         new NotFoundException(FEED_NOT_FOUND),
+      );
+    });
+  });
+
+  describe('increment view count', () => {
+    it('Feed의 조회수를 증가시킨다.', async () => {
+      const feed = new Feed({
+        id: 'feed_uuid',
+        title: 'test title',
+        content: 'test content',
+        viewCount: 0,
+      });
+
+      repository.getFeedByFeedIdAndIsPublic.mockResolvedValue(feed);
+      repository.increment.mockResolvedValue(feed.id);
+
+      const result = await service.incrementViewCount(feed.id);
+
+      expect(result).toEqual(true);
+    });
+
+    it('Feed의 조회수를 증가시키려고 할 때 Feed를 찾을 수 없는 경우 NotFoundException을 반환한다.', async () => {
+      repository.getFeedByFeedIdAndIsPublic.mockResolvedValue(undefined);
+      repository.increment.mockResolvedValue(undefined);
+
+      await expect(service.incrementViewCount(undefined)).rejects.toEqual(
+        expect.objectContaining({
+          status: 404,
+          response: {
+            code: FEED_NOT_FOUND.code,
+            message: FEED_NOT_FOUND.message,
+          },
+        }),
       );
     });
   });
