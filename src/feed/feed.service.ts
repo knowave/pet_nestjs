@@ -5,14 +5,13 @@ import { User } from 'src/user/entities/user.entity';
 import { FeedRepository } from './repo/feed.repository';
 import { Feed } from './entities/feed.entity';
 import { FEED_NOT_FOUND } from './error/feed.error';
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
-import { Redis } from 'ioredis';
+import { RedisService } from 'src/database/redis/redis.service';
 
 @Injectable()
 export class FeedService {
   constructor(
     private readonly feedRepository: FeedRepository,
-    @InjectRedis() private readonly redis: Redis,
+    private readonly redisService: RedisService,
   ) {}
 
   async createFeed(createFeedDto: CreateFeedDto, user: User): Promise<boolean> {
@@ -62,12 +61,12 @@ export class FeedService {
   }
 
   async topTenFeeds(): Promise<Feed[]> {
-    const topTenFeeds = await this.redis.get('topTenFeeds');
+    const topTenFeeds = await this.redisService.get('topTenFeeds');
 
     if (topTenFeeds) return JSON.parse(topTenFeeds);
 
     const feeds = await this.feedRepository.getTopTenFeedsAndSortViewCount();
-    await this.redis.set('topTenFeeds', JSON.stringify(feeds), 'EX', 60);
+    await this.redisService.set('topTenFeeds', JSON.stringify(feeds), 'EX', 60);
 
     return feeds;
   }
