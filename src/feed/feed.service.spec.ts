@@ -9,6 +9,7 @@ import { NotFoundException } from '@nestjs/common';
 import { faker } from '@faker-js/faker';
 import { RedisService } from 'src/database/redis/redis.service';
 import { subDays } from 'date-fns';
+import { S3Service } from 'src/s3/s3.service';
 
 const mockRepository = () => ({
   save: jest.fn(),
@@ -24,13 +25,21 @@ const mockRedisService = () => ({
   del: jest.fn(),
 });
 
+const mockS3Service = () => ({
+  getObject: jest.fn(),
+  uploadObject: jest.fn(),
+  deleteObject: jest.fn(),
+});
+
 type MockRepository<T = any> = Partial<Record<keyof FeedRepository, jest.Mock>>;
 type MockRedisService<T = any> = Partial<Record<keyof RedisService, jest.Mock>>;
+type MockS3Service<T = any> = Partial<Record<keyof S3Service, jest.Mock>>;
 
 describe('FeedService', () => {
   let service: FeedService;
   let repository: MockRepository<FeedRepository>;
   let redisService: MockRedisService<RedisService>;
+  let s3Service: MockS3Service<S3Service>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -44,12 +53,17 @@ describe('FeedService', () => {
           provide: RedisService,
           useValue: mockRedisService(),
         },
+        {
+          provide: S3Service,
+          useValue: mockS3Service(),
+        },
       ],
     }).compile();
 
     service = module.get<FeedService>(FeedService);
     repository = module.get<MockRepository<FeedRepository>>(FeedRepository);
     redisService = module.get<MockRedisService<RedisService>>(RedisService);
+    s3Service = module.get<MockS3Service<S3Service>>(S3Service);
   });
 
   afterEach(() => {
