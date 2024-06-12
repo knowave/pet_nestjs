@@ -22,8 +22,14 @@ export class FeedController {
   @Post()
   async createFeed(
     @Body() createFeedDto: CreateFeedDto,
+    @UploadedFile() thumbnail: Express.Multer.File,
     @CurrentUser() user: User,
   ): Promise<boolean> {
+    createFeedDto.thumbnail = {
+      fileName: thumbnail.originalname,
+      mimeType: thumbnail.mimetype,
+      fileContent: thumbnail.buffer,
+    };
     return await this.feedService.createFeed(createFeedDto, user);
   }
 

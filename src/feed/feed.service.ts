@@ -20,11 +20,26 @@ export class FeedService {
   async createFeed(createFeedDto: CreateFeedDto, user: User): Promise<boolean> {
     const { content, title, thumbnail } = createFeedDto;
 
+    let thumbnailImage: string;
+
+    if (thumbnail) {
+      const { fileName, mimeType, fileContent } = thumbnail;
+      const newFileName = `${uuid()}-${fileName}`;
+
+      const uploadFile = await this.s3service.uploadObject(
+        newFileName,
+        fileContent,
+        mimeType,
+      );
+
+      thumbnailImage = uploadFile.Key;
+    }
+
     await this.feedRepository.save(
       new Feed({
         content,
         title,
-        thumbnail,
+        thumbnail: thumbnailImage ?? null,
         user,
       }),
     );
@@ -104,7 +119,7 @@ export class FeedService {
         mimeType,
       );
 
-      feed.thumbnail = uploadedFile.Location;
+      feed.thumbnail = uploadedFile.Key;
     }
 
     feed.content = content;
