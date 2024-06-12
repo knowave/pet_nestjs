@@ -5,6 +5,7 @@ import { UploadFileDto } from 'src/common/upload-file-dto';
 export class CreateUserDto extends PickType(User, [
   'email',
   'username',
+  'password',
   'nickname',
   'phoneNumber',
   'introduction',
