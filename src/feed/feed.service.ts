@@ -14,7 +14,7 @@ export class FeedService {
   constructor(
     private readonly feedRepository: FeedRepository,
     private readonly redisService: RedisService,
-    private readonly s3service: S3Service,
+    private readonly s3Service: S3Service,
   ) {}
 
   async createFeed(createFeedDto: CreateFeedDto, user: User): Promise<boolean> {
@@ -26,7 +26,7 @@ export class FeedService {
       const { fileName, mimeType, fileContent } = thumbnail;
       const newFileName = `${uuid()}-${fileName}`;
 
-      const uploadFile = await this.s3service.uploadObject(
+      const uploadFile = await this.s3Service.uploadObject(
         newFileName,
         fileContent,
         mimeType,
@@ -107,13 +107,13 @@ export class FeedService {
       if (feed.thumbnail) {
         const urlArr = feed.thumbnail.split('/');
         const fileName = urlArr.slice(-1)[0];
-        await this.s3service.deleteObject(fileName);
+        await this.s3Service.deleteObject(fileName);
       }
 
       const { fileName, mimeType, fileContent } = thumbnail;
       const newFileName = `${uuid()}-${fileName}`;
 
-      const uploadedFile = await this.s3service.uploadObject(
+      const uploadedFile = await this.s3Service.uploadObject(
         newFileName,
         fileContent,
         mimeType,
@@ -139,7 +139,7 @@ export class FeedService {
     const urlArr = feed.thumbnail.split('/');
     const fileName = urlArr.slice(-1)[0];
 
-    await this.s3service.deleteObject(fileName);
+    await this.s3Service.deleteObject(fileName);
     await this.feedRepository.softRemove(feedId);
     return true;
   }
