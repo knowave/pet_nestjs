@@ -4,7 +4,7 @@ import { LoginResponseDto } from './dto/login-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { Public } from './is-public-decorator';
 import { UserService } from 'src/user/user.service';
-import { CurrentUser } from 'src/user/user.decorator';
+import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { User } from 'src/user/entities/user.entity';
 
 @Controller('auth')

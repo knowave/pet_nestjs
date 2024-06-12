@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Delete } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { CurrentUser } from './user.decorator';
+import { CurrentUser } from '../common/decorators/user.decorator';
 import { User } from './entities/user.entity';
 import { Public } from 'src/auth/is-public-decorator';
 

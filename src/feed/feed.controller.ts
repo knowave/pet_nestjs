@@ -11,7 +11,7 @@ import {
 import { FeedService } from './feed.service';
 import { CreateFeedDto } from './dto/create-feed.dto';
 import { UpdateFeedDto } from './dto/update-feed.dto';
-import { CurrentUser } from 'src/user/user.decorator';
+import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { Feed } from './entities/feed.entity';
 
