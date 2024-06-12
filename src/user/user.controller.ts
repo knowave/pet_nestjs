@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Delete,
+  UploadedFile,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -12,8 +20,17 @@ export class UserController {
 
   @Public()
   @Post()
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.userService.createUser(createUserDto);
+  async createUser(
+    @Body() createUserDto: CreateUserDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    createUserDto.profileImage = {
+      fileName: file.originalname,
+      mimeType: file.mimetype,
+      fileContent: file.buffer,
+    };
+
+    return await this.userService.createUser(createUserDto);
   }
 
   @Get('profile')
@@ -22,12 +39,22 @@ export class UserController {
   }
 
   @Patch()
-  update(@CurrentUser() user: User, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.updateUser(user.id, updateUserDto);
+  async update(
+    @CurrentUser() user: User,
+    @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    updateUserDto.profileImage = {
+      fileName: file.originalname,
+      mimeType: file.mimetype,
+      fileContent: file.buffer,
+    };
+
+    return await this.userService.updateUser(user.id, updateUserDto);
   }
 
   @Delete()
-  remove(@CurrentUser() user: User) {
-    return this.userService.deleteUser(user.id);
+  async remove(@CurrentUser() user: User) {
+    return await this.userService.deleteUser(user.id);
   }
 }
