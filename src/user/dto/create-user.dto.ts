@@ -1,15 +1,13 @@
-import { OmitType } from '@nestjs/mapped-types';
+import { PickType } from '@nestjs/mapped-types';
 import { User } from '../entities/user.entity';
+import { UploadFileDto } from 'src/common/upload-file-dto';
 
-export class CreateUserDto extends OmitType(User, [
-  'token',
-  'isDeleted',
-  'feeds',
-  'comments',
-  'followers',
-  'followings',
-  'id',
-  'createdAt',
-  'deletedAt',
-  'updatedAt',
-]) {}
+export class CreateUserDto extends PickType(User, [
+  'email',
+  'username',
+  'nickname',
+  'phoneNumber',
+  'introduction',
+]) {
+  profileImage: UploadFileDto;
+}
