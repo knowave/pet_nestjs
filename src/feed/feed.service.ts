@@ -46,8 +46,8 @@ export class FeedService {
     return true;
   }
 
-  findAll() {
-    return `This action returns all feed`;
+  async getPublicFeeds(): Promise<Feed[]> {
+    return await this.feedRepository.getFeedsByPublic();
   }
 
   async getMyFeed(feedId: string, userId: string): Promise<Feed> {
