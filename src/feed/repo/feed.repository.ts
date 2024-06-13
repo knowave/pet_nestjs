@@ -51,4 +51,13 @@ export class FeedRepository {
   async softRemove(feedId: string): Promise<void> {
     await this.repository.softDelete({ id: feedId });
   }
+
+  async getFeedsByPublic(): Promise<Feed[]> {
+    return await this.repository
+      .createQueryBuilder('feed')
+      .innerJoinAndSelect('feed.user', 'user')
+      .where('feed.isPublic = true')
+      .orderBy('feed.createdAt', 'DESC')
+      .getMany();
+  }
 }
