@@ -14,6 +14,7 @@ import { UpdateFeedDto } from './dto/update-feed.dto';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { Feed } from './entities/feed.entity';
+import { Public } from 'src/auth/is-public-decorator';
 
 @Controller('feed')
 export class FeedController {
@@ -33,7 +34,14 @@ export class FeedController {
     return await this.feedService.createFeed(createFeedDto, user);
   }
 
+  @Get()
+  @Public()
+  async getPublicFeeds(): Promise<Feed[]> {
+    return await this.feedService.getPublicFeeds();
+  }
+
   @Post('/:feedId/view')
+  @Public()
   async incrementViewCount(@Param('feedId') feedId: string): Promise<boolean> {
     return await this.feedService.incrementViewCount(feedId);
   }
@@ -47,11 +55,13 @@ export class FeedController {
   }
 
   @Get('/:feedId')
+  @Public()
   async getPublicFeed(@Param('feedId') feedId: string): Promise<Feed> {
     return await this.feedService.getPublicFeed(feedId);
   }
 
   @Get('/top-ten')
+  @Public()
   async topTenFeeds(): Promise<Feed[]> {
     return await this.feedService.topTenFeeds();
   }
