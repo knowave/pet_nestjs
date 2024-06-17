@@ -52,7 +52,10 @@ export class FeedRepository {
     await this.repository.softDelete({ id: feedId });
   }
 
-  async getFeedsByPublic(page?: number, limit?: number): Promise<Feed[]> {
+  async getFeedsByPublic(
+    page?: number,
+    limit?: number,
+  ): Promise<[Feed[], number]> {
     const skip = (page - 1) * limit;
     return await this.repository
       .createQueryBuilder('feed')
@@ -71,6 +74,6 @@ export class FeedRepository {
       .orderBy('feed.createdAt', 'DESC')
       .skip(skip)
       .take(limit)
-      .getMany();
+      .getManyAndCount();
   }
 }
