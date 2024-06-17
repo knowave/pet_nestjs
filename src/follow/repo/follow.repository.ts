@@ -35,4 +35,16 @@ export class FollowRepository {
       .where('follow.followerId = :followerId', { followerId })
       .getMany();
   }
+
+  async getFollow(followerId: string, followingId: string): Promise<Follow> {
+    return await this.repository
+      .createQueryBuilder('follow')
+      .where('follow.followerId = :followerId', { followerId })
+      .andWhere('follow.followingId = :followingId', { followingId })
+      .getOne();
+  }
+
+  async softRemove(follow: Follow): Promise<Follow> {
+    return await this.repository.softRemove(follow);
+  }
 }
