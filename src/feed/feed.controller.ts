@@ -17,6 +17,7 @@ import { User } from 'src/user/entities/user.entity';
 import { Feed } from './entities/feed.entity';
 import { Public } from 'src/auth/is-public-decorator';
 import { IPage } from 'src/common/types/page';
+import { PaginationEnum } from 'src/common/enums/pagination.enum';
 
 @Controller('feed')
 export class FeedController {
@@ -41,8 +42,9 @@ export class FeedController {
   async getPublicFeeds(
     @Query('page') page: number,
     @Query('limit') limit?: number,
+    @Query('sort') sort?: PaginationEnum,
   ): Promise<IPage<Feed>> {
-    return await this.feedService.getPublicFeeds(page, limit);
+    return await this.feedService.getPublicFeeds({ page, limit, sort });
   }
 
   @Get('/my/feed-list')
@@ -51,7 +53,7 @@ export class FeedController {
     @Query('limit') limit: number,
     @CurrentUser() user: User,
   ): Promise<IPage<Feed>> {
-    return await this.feedService.getMyFeeds({ userId: user.id, page, limit });
+    return await this.feedService.getMyFeeds({ page, limit }, user.id);
   }
 
   @Post('/:feedId/view')

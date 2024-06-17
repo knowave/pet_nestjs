@@ -10,6 +10,7 @@ import { S3Service } from 'src/s3/s3.service';
 import { v4 as uuid } from 'uuid';
 import { GetMyFeedsDto } from './dto/get-my-feeds.dto';
 import { IPage } from 'src/common/types/page';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class FeedService {
@@ -48,11 +49,14 @@ export class FeedService {
     return true;
   }
 
-  async getPublicFeeds(page = 1, limit?: number): Promise<IPage<Feed>> {
-    const [feeds, totalCount] = await this.feedRepository.getFeedsByPublic(
+  async getPublicFeeds(paginationDto: PaginationDto): Promise<IPage<Feed>> {
+    const { page, limit, sort } = paginationDto;
+
+    const [feeds, totalCount] = await this.feedRepository.getFeedsByPublic({
       page,
       limit,
-    );
+      sort,
+    });
 
     console.log(totalCount);
 
@@ -78,17 +82,21 @@ export class FeedService {
     return feed;
   }
 
-  async getMyFeeds(getMyFeedsDto: GetMyFeedsDto): Promise<IPage<Feed>> {
-    const [feeds, totalCount] =
-      await this.feedRepository.getFeedsByFeedIdAndUserId(getMyFeedsDto);
+  async getMyFeeds(paginationDto: PaginationDto, userId): Promise<IPage<Feed>> {
+    const { page, limit } = paginationDto;
+
+    const [feeds, totalCount] = await this.feedRepository.getFeedsByUserId(
+      { page, limit },
+      userId,
+    );
 
     return {
       data: feeds,
       totalCount,
       pageInfo: {
-        currentPage: getMyFeedsDto.page,
-        totalPages: Math.ceil(totalCount / getMyFeedsDto.limit),
-        hasNextPage: getMyFeedsDto.page * getMyFeedsDto.limit < totalCount,
+        currentPage: page,
+        totalPages: Math.ceil(totalCount / limit),
+        hasNextPage: page * limit < totalCount,
       },
     };
   }
