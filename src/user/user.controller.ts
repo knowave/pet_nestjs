@@ -24,11 +24,13 @@ export class UserController {
     @Body() createUserDto: CreateUserDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    createUserDto.profileImage = {
-      fileName: file.originalname,
-      mimeType: file.mimetype,
-      fileContent: file.buffer,
-    };
+    if (file) {
+      createUserDto.profileImage = {
+        fileName: file.originalname,
+        mimeType: file.mimetype,
+        fileContent: file.buffer,
+      };
+    }
 
     return await this.userService.createUser(createUserDto);
   }
