@@ -52,12 +52,25 @@ export class FeedRepository {
     await this.repository.softDelete({ id: feedId });
   }
 
-  async getFeedsByPublic(): Promise<Feed[]> {
+  async getFeedsByPublic(page?: number, limit?: number): Promise<Feed[]> {
+    const skip = (page - 1) * limit;
     return await this.repository
       .createQueryBuilder('feed')
-      .innerJoinAndSelect('feed.user', 'user')
+      .innerJoin('feed.user', 'user')
+      .select([
+        'feed.id',
+        'feed.title',
+        'feed.content',
+        'feed.thumbnail',
+        'feed.createdAt',
+        'user.id',
+        'user.username',
+        'user.profileImage',
+      ])
       .where('feed.isPublic = true')
       .orderBy('feed.createdAt', 'DESC')
+      .skip(skip)
+      .take(limit)
       .getMany();
   }
 }
