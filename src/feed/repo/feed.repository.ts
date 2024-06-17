@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Feed } from '../entities/feed.entity';
 import { Repository } from 'typeorm';
-import { GetMyFeedsDto } from '../dto/get-my-feeds.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { PaginationEnum } from 'src/common/enums/pagination.enum';
 
 @Injectable()
 export class FeedRepository {
@@ -54,11 +55,12 @@ export class FeedRepository {
   }
 
   async getFeedsByPublic(
-    page?: number,
-    limit?: number,
+    paginationDto: PaginationDto,
   ): Promise<[Feed[], number]> {
+    const { page, limit, sort } = paginationDto;
     const skip = (page - 1) * limit;
-    return await this.repository
+
+    const qb = this.repository
       .createQueryBuilder('feed')
       .innerJoin('feed.user', 'user')
       .select([
@@ -67,21 +69,41 @@ export class FeedRepository {
         'feed.content',
         'feed.thumbnail',
         'feed.createdAt',
+        'feed.viewCount',
         'user.id',
         'user.username',
         'user.profileImage',
       ])
-      .where('feed.isPublic = true')
-      .orderBy('feed.createdAt', 'DESC')
-      .skip(skip)
-      .take(limit)
-      .getManyAndCount();
+      .where('feed.isPublic = true');
+
+    switch (sort) {
+      case PaginationEnum.CREATE_DATE_ASC:
+        qb.orderBy('feed.createdAt', 'ASC');
+        break;
+      case PaginationEnum.CREATE_DATE_DESC:
+        qb.orderBy('feed.createdAt', 'DESC');
+        break;
+      case PaginationEnum.VIEW_COUNT_ASC:
+        qb.orderBy('feed.viewCount', 'ASC');
+        break;
+      case PaginationEnum.VIEW_COUNT_DESC:
+        qb.orderBy('feed.viewCount', 'DESC');
+        break;
+
+      default:
+        qb.orderBy('feed.createdAt', 'DESC');
+        break;
+    }
+
+    qb.skip(skip).take(limit);
+    return await qb.getManyAndCount();
   }
 
-  async getFeedsByFeedIdAndUserId(
-    getMyFeedsDto: GetMyFeedsDto,
+  async getFeedsByUserId(
+    paginationDto: PaginationDto,
+    userId: string,
   ): Promise<[Feed[], number]> {
-    const { userId, page, limit } = getMyFeedsDto;
+    const { page, limit } = paginationDto;
     const skip = (page - 1) * limit;
 
     return await this.repository
