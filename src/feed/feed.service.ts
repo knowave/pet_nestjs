@@ -57,8 +57,6 @@ export class FeedService {
       sort,
     });
 
-    console.log(totalCount);
-
     return {
       data: feeds,
       totalCount,
