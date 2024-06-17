@@ -46,8 +46,8 @@ export class FeedService {
     return true;
   }
 
-  async getPublicFeeds(): Promise<Feed[]> {
-    return await this.feedRepository.getFeedsByPublic();
+  async getPublicFeeds(page = 1, limit?: number): Promise<Feed[]> {
+    return await this.feedRepository.getFeedsByPublic(page, limit);
   }
 
   async getMyFeed(feedId: string, userId: string): Promise<Feed> {

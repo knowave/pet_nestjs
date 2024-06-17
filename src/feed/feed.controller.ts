@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UploadedFile,
+  Query,
 } from '@nestjs/common';
 import { FeedService } from './feed.service';
 import { CreateFeedDto } from './dto/create-feed.dto';
@@ -36,8 +37,11 @@ export class FeedController {
 
   @Get()
   @Public()
-  async getPublicFeeds(): Promise<Feed[]> {
-    return await this.feedService.getPublicFeeds();
+  async getPublicFeeds(
+    @Query('page') page: number,
+    @Query('limit') limit?: number,
+  ): Promise<Feed[]> {
+    return await this.feedService.getPublicFeeds(page, limit);
   }
 
   @Post('/:feedId/view')
