@@ -20,7 +20,7 @@ import { DataSource } from 'typeorm';
       database: DATABASE_NAME,
       entities: [__dirname + '../../../**/entities/*.entity{.ts,.js}'],
       migrations: [__dirname + 'migrations/*{.ts}'],
-      synchronize: true,
+      synchronize: false,
       migrationsRun: false,
       logging: process.env.NODE_ENV === 'prod' ? true : false,
     }),
