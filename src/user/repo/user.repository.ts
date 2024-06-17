@@ -38,4 +38,11 @@ export class UserRepository {
       .where('user.id = :userId', { userId })
       .getOne();
   }
+
+  async getUserByUsernameOrNickname(name: string): Promise<User> {
+    return await this.repository
+      .createQueryBuilder('user')
+      .where('user.username = :name OR user.nickname = :name', { name })
+      .getOne();
+  }
 }
