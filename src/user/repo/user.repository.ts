@@ -42,7 +42,8 @@ export class UserRepository {
   async getUserByUsernameOrNickname(name: string): Promise<User> {
     return await this.repository
       .createQueryBuilder('user')
-      .where('user.username = :name OR user.nickname = :name', { name })
+      .where('user.username = :username', { username: name })
+      .orWhere('user.nickname = :nickname', { nickname: name })
       .getOne();
   }
 }

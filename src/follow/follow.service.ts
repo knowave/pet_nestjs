@@ -1,26 +1,40 @@
-import { Injectable } from '@nestjs/common';
-import { CreateFollowDto } from './dto/create-follow.dto';
-import { UpdateFollowDto } from './dto/update-follow.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { FollowRepository } from './repo/follow.repository';
+import { UserRepository } from 'src/user/repo/user.repository';
+import { NOT_FOUND_USER } from 'src/user/error/user.error';
+import { Follow } from './entities/follow.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class FollowService {
-  create(createFollowDto: CreateFollowDto) {
-    return 'This action adds a new follow';
-  }
+  constructor(
+    private readonly followRepository: FollowRepository,
+    private readonly userRepository: UserRepository,
+  ) {}
 
-  findAll() {
-    return `This action returns all follow`;
-  }
+  async follow(follower: User, name: string): Promise<boolean> {
+    const following = await this.userRepository.getUserByUsernameOrNickname(
+      name,
+    );
 
-  findOne(id: number) {
-    return `This action returns a #${id} follow`;
-  }
+    if (!following) throw new NotFoundException(NOT_FOUND_USER);
 
-  update(id: number, updateFollowDto: UpdateFollowDto) {
-    return `This action updates a #${id} follow`;
-  }
+    const isFollow = await this.followRepository.getFollow(
+      follower.id,
+      following.id,
+    );
 
-  remove(id: number) {
-    return `This action removes a #${id} follow`;
+    if (isFollow) {
+      await this.followRepository.softRemove(isFollow);
+      return false;
+    } else {
+      await this.followRepository.save(
+        new Follow({
+          follower,
+          following,
+        }),
+      );
+      return true;
+    }
   }
 }
