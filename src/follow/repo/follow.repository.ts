@@ -47,4 +47,18 @@ export class FollowRepository {
   async softRemove(follow: Follow): Promise<Follow> {
     return await this.repository.softRemove(follow);
   }
+
+  async getFollowersByUserId(userId: string): Promise<Follow[]> {
+    return await this.repository
+      .createQueryBuilder('follow')
+      .innerJoin('follow.follower', 'follower')
+      .select([
+        'follower.id',
+        'follower.username',
+        'follower.nickname',
+        'follower.profileImage',
+      ])
+      .where('follow.followingId = :userId', { userId })
+      .getMany();
+  }
 }

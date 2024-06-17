@@ -4,6 +4,8 @@ import { UserRepository } from 'src/user/repo/user.repository';
 import { NOT_FOUND_USER } from 'src/user/error/user.error';
 import { Follow } from './entities/follow.entity';
 import { User } from 'src/user/entities/user.entity';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { IPage } from 'src/common/types/page';
 
 @Injectable()
 export class FollowService {
@@ -40,5 +42,30 @@ export class FollowService {
       );
       return true;
     }
+  }
+
+  async getFollowers(
+    paginationDto: PaginationDto,
+    userId: string,
+  ): Promise<IPage<User>> {
+    const { page, limit } = paginationDto;
+    const skip = (page - 1) * limit;
+
+    const followers = await this.followRepository.getFollowersByUserId(userId);
+
+    const followerUsers = followers
+      .map((follower) => follower.follower)
+      .filter((follower) => follower !== null);
+    const paginationFollowers = followerUsers.slice(skip, skip + limit) || [];
+
+    return {
+      data: paginationFollowers,
+      totalCount: followerUsers.length,
+      pageInfo: {
+        currentPage: page,
+        totalPages: Math.ceil(followerUsers.length / limit),
+        hasNextPage: skip + limit < followerUsers.length,
+      },
+    };
   }
 }
