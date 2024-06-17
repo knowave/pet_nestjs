@@ -25,9 +25,13 @@ export class FollowService {
     );
 
     if (isFollow) {
+      await this.userRepository.followerDecrement(following.id);
+      await this.userRepository.followingDecrement(follower.id);
       await this.followRepository.softRemove(isFollow);
       return false;
     } else {
+      await this.userRepository.followerIncrement(following.id);
+      await this.userRepository.followingIncrement(follower.id);
       await this.followRepository.save(
         new Follow({
           follower,

@@ -46,4 +46,20 @@ export class UserRepository {
       .orWhere('user.nickname = :nickname', { nickname: name })
       .getOne();
   }
+
+  async followerIncrement(id: string): Promise<void> {
+    await this.repository.increment({ id }, 'followerCount', 1);
+  }
+
+  async followingIncrement(id: string): Promise<void> {
+    await this.repository.increment({ id }, 'followingCount', 1);
+  }
+
+  async followerDecrement(id: string): Promise<void> {
+    await this.repository.decrement({ id }, 'followerCount', 1);
+  }
+
+  async followingDecrement(id: string): Promise<void> {
+    await this.repository.decrement({ id }, 'followingCount', 1);
+  }
 }
