@@ -68,6 +68,12 @@ export class User extends BaseEntity {
   @Column({ type: 'boolean', comment: '사용자 탈퇴 여부', default: false })
   isDeleted: boolean;
 
+  @Column({ comment: '회원 팔로워 수', default: 0 })
+  followerCount?: number;
+
+  @Column({ comment: '회원 팔로잉 수', default: 0 })
+  followingCount?: number;
+
   @OneToMany(() => Feed, (feed) => feed.user, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
