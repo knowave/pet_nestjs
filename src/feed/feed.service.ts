@@ -78,16 +78,20 @@ export class FeedService {
     return feed;
   }
 
-  // async getMyFeeds(getMyFeedsDto: GetMyFeedsDto): Promise<[Feed[], number]> {
-  //   const { feedId, userId, page, limit } = getMyFeedsDto;
+  async getMyFeeds(getMyFeedsDto: GetMyFeedsDto): Promise<IPage<Feed>> {
+    const [feeds, totalCount] =
+      await this.feedRepository.getFeedsByFeedIdAndUserId(getMyFeedsDto);
 
-  //   return await this.feedRepository.getFeedsByUserId(
-  //     feedId,
-  //     userId,
-  //     page,
-  //     limit,
-  //   );
-  // }
+    return {
+      data: feeds,
+      totalCount,
+      pageInfo: {
+        currentPage: getMyFeedsDto.page,
+        totalPages: Math.ceil(totalCount / getMyFeedsDto.limit),
+        hasNextPage: getMyFeedsDto.page * getMyFeedsDto.limit < totalCount,
+      },
+    };
+  }
 
   async getPublicFeed(feedId: string): Promise<Feed> {
     const feed = await this.feedRepository.getFeedByFeedIdAndIsPublic(feedId);

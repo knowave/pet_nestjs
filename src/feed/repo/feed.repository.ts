@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Feed } from '../entities/feed.entity';
 import { Repository } from 'typeorm';
+import { GetMyFeedsDto } from '../dto/get-my-feeds.dto';
 
 @Injectable()
 export class FeedRepository {
@@ -74,6 +75,32 @@ export class FeedRepository {
       .orderBy('feed.createdAt', 'DESC')
       .skip(skip)
       .take(limit)
+      .getManyAndCount();
+  }
+
+  async getFeedsByFeedIdAndUserId(
+    getMyFeedsDto: GetMyFeedsDto,
+  ): Promise<[Feed[], number]> {
+    const { userId, page, limit } = getMyFeedsDto;
+    const skip = (page - 1) * limit;
+
+    return await this.repository
+      .createQueryBuilder('feed')
+      .innerJoin('feed.user', 'user')
+      .select([
+        'feed.id',
+        'feed.title',
+        'feed.content',
+        'feed.thumbnail',
+        'feed.createdAt',
+        'user.id',
+        'user.username',
+        'user.profileImage',
+      ])
+      .where('feed.userId = :userId', { userId })
+      .orderBy('feed.createdAt', 'DESC')
+      .skip(skip)
+      .limit(limit)
       .getManyAndCount();
   }
 }

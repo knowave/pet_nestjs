@@ -45,6 +45,15 @@ export class FeedController {
     return await this.feedService.getPublicFeeds(page, limit);
   }
 
+  @Get('/my/feed-list')
+  async getMyFeeds(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @CurrentUser() user: User,
+  ): Promise<IPage<Feed>> {
+    return await this.feedService.getMyFeeds({ userId: user.id, page, limit });
+  }
+
   @Post('/:feedId/view')
   @Public()
   async incrementViewCount(@Param('feedId') feedId: string): Promise<boolean> {
