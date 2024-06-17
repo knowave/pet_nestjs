@@ -8,6 +8,8 @@ import { FEED_NOT_FOUND } from './error/feed.error';
 import { RedisService } from 'src/database/redis/redis.service';
 import { S3Service } from 'src/s3/s3.service';
 import { v4 as uuid } from 'uuid';
+import { GetMyFeedsDto } from './dto/get-my-feeds.dto';
+import { IPage } from 'src/common/types/page';
 
 @Injectable()
 export class FeedService {
@@ -46,8 +48,23 @@ export class FeedService {
     return true;
   }
 
-  async getPublicFeeds(page = 1, limit?: number): Promise<Feed[]> {
-    return await this.feedRepository.getFeedsByPublic(page, limit);
+  async getPublicFeeds(page = 1, limit?: number): Promise<IPage<Feed>> {
+    const [feeds, totalCount] = await this.feedRepository.getFeedsByPublic(
+      page,
+      limit,
+    );
+
+    console.log(totalCount);
+
+    return {
+      data: feeds,
+      totalCount,
+      pageInfo: {
+        currentPage: page,
+        totalPages: Math.ceil(totalCount / limit),
+        hasNextPage: page * limit < totalCount,
+      },
+    };
   }
 
   async getMyFeed(feedId: string, userId: string): Promise<Feed> {
@@ -60,6 +77,17 @@ export class FeedService {
 
     return feed;
   }
+
+  // async getMyFeeds(getMyFeedsDto: GetMyFeedsDto): Promise<[Feed[], number]> {
+  //   const { feedId, userId, page, limit } = getMyFeedsDto;
+
+  //   return await this.feedRepository.getFeedsByUserId(
+  //     feedId,
+  //     userId,
+  //     page,
+  //     limit,
+  //   );
+  // }
 
   async getPublicFeed(feedId: string): Promise<Feed> {
     const feed = await this.feedRepository.getFeedByFeedIdAndIsPublic(feedId);

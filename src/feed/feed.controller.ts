@@ -16,6 +16,7 @@ import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { Feed } from './entities/feed.entity';
 import { Public } from 'src/auth/is-public-decorator';
+import { IPage } from 'src/common/types/page';
 
 @Controller('feed')
 export class FeedController {
@@ -40,7 +41,7 @@ export class FeedController {
   async getPublicFeeds(
     @Query('page') page: number,
     @Query('limit') limit?: number,
-  ): Promise<Feed[]> {
+  ): Promise<IPage<Feed>> {
     return await this.feedService.getPublicFeeds(page, limit);
   }
 
