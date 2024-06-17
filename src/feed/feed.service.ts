@@ -8,7 +8,6 @@ import { FEED_NOT_FOUND } from './error/feed.error';
 import { RedisService } from 'src/database/redis/redis.service';
 import { S3Service } from 'src/s3/s3.service';
 import { v4 as uuid } from 'uuid';
-import { GetMyFeedsDto } from './dto/get-my-feeds.dto';
 import { IPage } from 'src/common/types/page';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 
