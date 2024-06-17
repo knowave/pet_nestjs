@@ -23,8 +23,10 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky install",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm -d ./src/database/mysql/type-orm.config.ts",
-    "migration:generate": "npm run typeorm -- migration:generate ./src/database/migrations/NewMigration",
-    "migration:run": "npm run typeorm migration:run"
+    "migration:create": "ts-node ./node_modules/typeorm/cli.js migration:create -d ./src/database/mysql/migrations -n NewMigration",
+    "migration:generate": "yarn typeorm -- migration:generate ./src/database/migrations/mysql/NewMigration",
+    "migration:run": "yarn typeorm migration:run",
+    "migration:revert": "yarn typeorm migration:revert"
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
