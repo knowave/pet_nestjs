@@ -21,18 +21,12 @@ const userMockRepository = () => ({
   followingDecrement: jest.fn(),
 });
 
-type FollowMockRepository<T = any> = Partial<
-  Record<keyof FollowRepository, jest.Mock>
->;
-
-type UserMockRepository<T = any> = Partial<
-  Record<keyof UserRepository, jest.Mock>
->;
+type MockRepository<T = any> = Partial<Record<keyof T, jest.Mock>>;
 
 describe('FollowService', () => {
   let service: FollowService;
-  let followRepository: FollowMockRepository<FollowRepository>;
-  let userRepository: UserMockRepository<UserRepository>;
+  let followRepository: MockRepository<FollowRepository>;
+  let userRepository: MockRepository<UserRepository>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,9 +39,8 @@ describe('FollowService', () => {
 
     service = module.get<FollowService>(FollowService);
     followRepository =
-      module.get<FollowMockRepository<FollowRepository>>(FollowRepository);
-    userRepository =
-      module.get<UserMockRepository<UserRepository>>(UserRepository);
+      module.get<MockRepository<FollowRepository>>(FollowRepository);
+    userRepository = module.get<MockRepository<UserRepository>>(UserRepository);
   });
 
   afterEach(() => {
