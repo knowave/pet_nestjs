@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { UserRepository } from './repo/user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { S3Service } from 'src/s3/s3.service';
 
 const mockRepository = () => ({
   save: jest.fn(),
@@ -11,11 +12,19 @@ const mockRepository = () => ({
   softRemove: jest.fn(),
 });
 
+const mockS3Service = () => ({
+  getObject: jest.fn(),
+  uploadObject: jest.fn(),
+  deleteObject: jest.fn(),
+});
+
 type MockRepository<T = any> = Partial<Record<keyof UserRepository, jest.Mock>>;
+type MockS3Service<T = any> = Partial<Record<keyof S3Service, jest.Mock>>;
 
 describe('UserService', () => {
   let service: UserService;
   let repository: MockRepository<UserRepository>;
+  let s3Service: MockS3Service<S3Service>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -25,11 +34,16 @@ describe('UserService', () => {
           provide: UserRepository,
           useValue: mockRepository(),
         },
+        {
+          provide: S3Service,
+          useValue: mockS3Service(),
+        },
       ],
     }).compile();
 
     service = module.get<UserService>(UserService);
     repository = module.get<MockRepository<UserRepository>>(UserRepository);
+    s3Service = module.get<MockS3Service<S3Service>>(S3Service);
   });
 
   afterEach(() => {
@@ -45,9 +59,15 @@ describe('UserService', () => {
         password: 'test1234!',
         phoneNumber: '010-1234-5678',
         introduction: 'tester',
+        profileImage: {
+          fileName: 'test.jpg',
+          mimeType: 'image/jpeg',
+          fileContent: Buffer.from('test'),
+        },
       };
 
       repository.save.mockResolvedValue(createUser);
+      s3Service.uploadObject.mockResolvedValue({ Key: 'test.jpg' });
       const result = await service.createUser(createUser);
       expect(result).toEqual(createUser);
     });
@@ -60,6 +80,11 @@ describe('UserService', () => {
         password: 'test1234!',
         phoneNumber: '010-1234-5678',
         introduction: 'tester',
+        profileImage: {
+          fileName: 'test.jpg',
+          mimeType: 'image/jpeg',
+          fileContent: Buffer.from('test'),
+        },
       };
 
       repository.getUserByEmail.mockResolvedValue(createUser);
@@ -77,6 +102,11 @@ describe('UserService', () => {
         password: 'test1234!',
         phoneNumber: '010-1234-5678',
         introduction: 'tester',
+        profileImage: {
+          fileName: 'test.jpg',
+          mimeType: 'image/jpeg',
+          fileContent: Buffer.from('test'),
+        },
       };
 
       repository.getUserById.mockResolvedValue(user);

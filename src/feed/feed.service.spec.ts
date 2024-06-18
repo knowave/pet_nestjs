@@ -76,11 +76,16 @@ describe('FeedService', () => {
       const feed: CreateFeedDto = {
         content: 'test content',
         title: 'test title',
-        thumbnail: 'test thumbnail',
         isPublic: true,
+        thumbnail: {
+          fileName: 'test.jpg',
+          mimeType: 'image/jpeg',
+          fileContent: Buffer.from('test'),
+        },
       };
 
       repository.save.mockResolvedValue(feed);
+      s3Service.uploadObject.mockResolvedValue({ Key: 'test.jpg' });
       const result = await service.createFeed(feed, user);
 
       expect(result).toEqual(true);
