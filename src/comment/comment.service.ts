@@ -1,26 +1,29 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { User } from 'src/user/entities/user.entity';
+import { FeedRepository } from 'src/feed/repo/feed.repository';
+import { FEED_NOT_FOUND } from 'src/feed/error/feed.error';
+import { CommentRepository } from './repo/comment.repository';
+import { Comment } from './entities/comment.entity';
 
 @Injectable()
 export class CommentService {
-  create(createCommentDto: CreateCommentDto) {
-    return 'This action adds a new comment';
-  }
+  constructor(
+    private readonly feedRepository: FeedRepository,
+    private readonly commentRepository: CommentRepository,
+  ) {}
 
-  findAll() {
-    return `This action returns all comment`;
-  }
+  async createComment(user: User, comment: string, feedId: string) {
+    const feed = await this.feedRepository.getFeedByFeedIdAndIsPublic(feedId);
 
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
-  }
+    if (!feed) throw new NotFoundException(FEED_NOT_FOUND);
 
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    return `This action updates a #${id} comment`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
+    await this.commentRepository.save(
+      new Comment({
+        comment,
+        feed,
+        user,
+      }),
+    );
+    return true;
   }
 }
