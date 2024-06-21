@@ -7,13 +7,13 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { PickService } from './pick.service';
+import { LikeService } from './like.service';
 import { CreatePickDto } from './dto/create-pick.dto';
 import { UpdatePickDto } from './dto/update-pick.dto';
 
 @Controller('pick')
-export class PickController {
-  constructor(private readonly pickService: PickService) {}
+export class LikeController {
+  constructor(private readonly pickService: LikeService) {}
 
   @Post()
   create(@Body() createPickDto: CreatePickDto) {

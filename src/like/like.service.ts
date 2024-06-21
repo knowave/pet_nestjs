@@ -3,7 +3,7 @@ import { CreatePickDto } from './dto/create-pick.dto';
 import { UpdatePickDto } from './dto/update-pick.dto';
 
 @Injectable()
-export class PickService {
+export class LikeService {
   create(createPickDto: CreatePickDto) {
     return 'This action adds a new pick';
   }
