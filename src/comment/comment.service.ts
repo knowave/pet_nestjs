@@ -4,6 +4,8 @@ import { FeedRepository } from 'src/feed/repo/feed.repository';
 import { FEED_NOT_FOUND } from 'src/feed/error/feed.error';
 import { CommentRepository } from './repo/comment.repository';
 import { Comment } from './entities/comment.entity';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { IPage } from 'src/common/types/page';
 
 @Injectable()
 export class CommentService {
@@ -25,5 +27,23 @@ export class CommentService {
       }),
     );
     return true;
+  }
+
+  async getCommentsByFeedId(
+    paginationDto: PaginationDto,
+    feedId: string,
+  ): Promise<IPage<Comment>> {
+    const [comments, totalCount] =
+      await this.commentRepository.getCommentsByFeedId(paginationDto, feedId);
+
+    return {
+      data: comments,
+      totalCount,
+      pageInfo: {
+        currentPage: paginationDto.page,
+        totalPages: Math.ceil(totalCount / paginationDto.limit),
+        hasNextPage: paginationDto.page * paginationDto.limit < totalCount,
+      },
+    };
   }
 }
