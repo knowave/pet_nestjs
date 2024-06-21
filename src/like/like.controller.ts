@@ -14,4 +14,12 @@ export class LikeController {
   ): Promise<boolean> {
     return await this.likeService.feedLike(feedId, user);
   }
+
+  @Post('/:commentId')
+  async commentLike(
+    @Param('commentId') commentId: string,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    return await this.likeService.commentLike(commentId, user);
+  }
 }

@@ -5,6 +5,7 @@ import { CommentRepository } from 'src/comment/repo/comment.repository';
 import { FEED_NOT_FOUND } from 'src/feed/error/feed.error';
 import { User } from 'src/user/entities/user.entity';
 import { Like } from './entities/like.entity';
+import { COMMENT_NOT_FOUND } from 'src/comment/error/comment.error';
 
 @Injectable()
 export class LikeService {
@@ -28,6 +29,24 @@ export class LikeService {
       return false;
     } else {
       await this.likeRepository.save(new Like({ feed, user }));
+      return true;
+    }
+  }
+
+  async commentLike(commentId: string, user: User): Promise<boolean> {
+    const comment = await this.commentRepository.getCommentById(commentId);
+    const isLike = await this.likeRepository.getLikeByCommentIdAndUserId(
+      commentId,
+      user.id,
+    );
+
+    if (!comment) throw new NotFoundException(COMMENT_NOT_FOUND);
+
+    if (isLike) {
+      await this.likeRepository.softRemove(isLike);
+      return false;
+    } else {
+      await this.likeRepository.save(new Like({ comment, user }));
       return true;
     }
   }
