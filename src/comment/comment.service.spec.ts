@@ -4,7 +4,6 @@ import { FeedRepository } from 'src/feed/repo/feed.repository';
 import { CommentRepository } from './repo/comment.repository';
 import { User } from 'src/user/entities/user.entity';
 import { Feed } from 'src/feed/entities/feed.entity';
-import { Comment } from './entities/comment.entity';
 
 const feedMockRepository = () => ({
   getFeedByFeedIdAndIsPublic: jest.fn(),
