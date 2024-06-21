@@ -26,6 +26,7 @@ export class CommentRepository {
     const qb = this.repository
       .createQueryBuilder('comment')
       .innerJoin('comment.user', 'user')
+      .addSelect(['user.id', 'user.nickname', 'user.profileImage'])
       .where('comment.feedId = :feedId', { feedId });
 
     switch (sort) {
