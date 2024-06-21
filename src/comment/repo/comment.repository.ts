@@ -42,7 +42,7 @@ export class CommentRepository {
         break;
     }
 
-    qb.skip(skip).take(limit);
+    qb.offset(skip).limit(limit);
     return await qb.getManyAndCount();
   }
 }
