@@ -134,4 +134,11 @@ export class FeedRepository {
       .limit(limit)
       .getManyAndCount();
   }
+
+  async getFeedById(feedId: string): Promise<Feed> {
+    return await this.repository
+      .createQueryBuilder('feed')
+      .where('feed.id = :feedId', { feedId })
+      .getOne();
+  }
 }
