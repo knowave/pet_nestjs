@@ -6,6 +6,7 @@ import {
   Get,
   Query,
   Patch,
+  Delete,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
@@ -52,6 +53,19 @@ export class CommentController {
       feedId,
       userId: user.id,
       content,
+    });
+  }
+
+  @Delete('/:feedId/:commentId')
+  async deleteComment(
+    @Param('feedId') feedId: string,
+    @Param('commentId') commentId: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.commentService.deleteComment({
+      feedId,
+      commentId,
+      userId: user.id,
     });
   }
 }

@@ -8,6 +8,7 @@ import { IPage } from 'src/common/types/page';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { COMMENT_NOT_FOUND } from './error/comment.error';
+import { DeleteCommentDto } from './dto/delete-comment.dto';
 
 @Injectable()
 export class CommentService {
@@ -62,6 +63,22 @@ export class CommentService {
 
     comment.content = content;
     await this.commentRepository.save(comment);
+    return true;
+  }
+
+  async deleteComment(deleteComment: DeleteCommentDto): Promise<boolean> {
+    const { feedId, userId, commentId } = deleteComment;
+
+    const comment =
+      await this.commentRepository.getCommentByCommentIdAndFeedIdAndUserId({
+        commentId,
+        feedId,
+        userId,
+      });
+
+    if (!comment) throw new NotFoundException(COMMENT_NOT_FOUND);
+
+    await this.commentRepository.softRemove(comment);
     return true;
   }
 }

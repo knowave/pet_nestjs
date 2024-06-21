@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Comment } from '../entities/comment.entity';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { PaginationEnum } from 'src/common/enums/pagination.enum';
+import { GetCommentByCommentIdAndFeedIdAndUserIdDto } from './dto/get-comment-by-comment-id-and-feed-id-and-user-id.dto';
 
 @Injectable()
 export class CommentRepository {
@@ -53,6 +54,20 @@ export class CommentRepository {
     return await this.repository
       .createQueryBuilder('comment')
       .where('comment.feedId = :feedId', { feedId })
+      .andWhere('comment.userId = :userId', { userId })
+      .getOne();
+  }
+
+  async getCommentByCommentIdAndFeedIdAndUserId(
+    getCommentByCommentIdAndFeedIdAndUserIdDto: GetCommentByCommentIdAndFeedIdAndUserIdDto,
+  ) {
+    const { commentId, feedId, userId } =
+      getCommentByCommentIdAndFeedIdAndUserIdDto;
+
+    return await this.repository
+      .createQueryBuilder('comment')
+      .where('comment.id = :commentId', { commentId })
+      .andWhere('comment.feedId = :feedId', { feedId })
       .andWhere('comment.userId = :userId', { userId })
       .getOne();
   }
