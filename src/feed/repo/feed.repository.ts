@@ -141,4 +141,12 @@ export class FeedRepository {
       .where('feed.id = :feedId', { feedId })
       .getOne();
   }
+
+  async incrementLikeCount(feedId: string): Promise<void> {
+    await this.repository.increment({ id: feedId }, 'likeCount', 1);
+  }
+
+  async decrementLikeCount(feedId: string): Promise<void> {
+    await this.repository.decrement({ id: feedId }, 'likeCount', 1);
+  }
 }
