@@ -27,4 +27,15 @@ export class LikeRepository {
       .andWhere('like.userId = :userId', { userId })
       .getOne();
   }
+
+  async getLikeByCommentIdAndUserId(
+    commentId: string,
+    userId: string,
+  ): Promise<Like> {
+    return await this.repository
+      .createQueryBuilder('like')
+      .where('like.commentId = :commentId', { commentId })
+      .andWhere('like.userId = :userId', { userId })
+      .getOne();
+  }
 }
