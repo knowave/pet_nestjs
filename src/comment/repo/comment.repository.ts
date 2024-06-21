@@ -56,4 +56,8 @@ export class CommentRepository {
       .andWhere('comment.userId = :userId', { userId })
       .getOne();
   }
+
+  async softRemove(comment: Comment): Promise<void> {
+    await this.repository.softRemove(comment);
+  }
 }
