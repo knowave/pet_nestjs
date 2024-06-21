@@ -16,10 +16,14 @@ const likeMockRepository = () => ({
 
 const feedMockRepository = () => ({
   getFeedById: jest.fn(),
+  incrementLikeCount: jest.fn(),
+  decrementLikeCount: jest.fn(),
 });
 
 const commentMockRepository = () => ({
   getCommentById: jest.fn(),
+  incrementLikeCount: jest.fn(),
+  decrementLikeCount: jest.fn(),
 });
 
 type MockRepository<T = any> = Partial<Record<keyof T, jest.Mock>>;
@@ -57,7 +61,7 @@ describe('LikeService', () => {
   });
 
   describe('feedLike', () => {
-    it('feed가 존재하고, 해당 user가 이미 feed를 좋아요를 누르지 않은 경우 true를 반환한다.', async () => {
+    it('feed가 존재하고, 해당 user가 이미 feed를 좋아요를 누르지 않은 경우 feed의 likeCount가 1증가하고, true를 반환한다.', async () => {
       const feed = new Feed({
         id: 'feedId',
         content: 'content',
@@ -69,6 +73,7 @@ describe('LikeService', () => {
 
       feedRepository.getFeedById.mockResolvedValue(feed);
       likeRepository.getLikeByFeedIdAndUserId.mockResolvedValue(null);
+      feedRepository.incrementLikeCount.mockResolvedValue(feed.id);
 
       const result = await service.feedLike(feed.id, user);
 
@@ -87,6 +92,7 @@ describe('LikeService', () => {
 
       feedRepository.getFeedById.mockResolvedValue(feed);
       likeRepository.getLikeByFeedIdAndUserId.mockResolvedValue({ feed, user });
+      feedRepository.decrementLikeCount.mockResolvedValue(feed.id);
 
       const result = await service.feedLike(feed.id, user);
 
@@ -107,6 +113,7 @@ describe('LikeService', () => {
 
       commentRepository.getCommentById.mockResolvedValue(comment);
       likeRepository.getLikeByCommentIdAndUserId.mockResolvedValue(null);
+      commentRepository.incrementLikeCount.mockResolvedValue(comment.id);
 
       const result = await service.commentLike(comment.id, user);
 
@@ -128,6 +135,7 @@ describe('LikeService', () => {
         comment,
         user,
       });
+      commentRepository.decrementLikeCount.mockResolvedValue(comment.id);
 
       const result = await service.commentLike(comment.id, user);
 
