@@ -6,6 +6,8 @@ import { FEED_NOT_FOUND } from 'src/feed/error/feed.error';
 import { User } from 'src/user/entities/user.entity';
 import { Like } from './entities/like.entity';
 import { COMMENT_NOT_FOUND } from 'src/comment/error/comment.error';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { IPage } from 'src/common/types/page';
 
 @Injectable()
 export class LikeService {
@@ -53,5 +55,23 @@ export class LikeService {
       await this.commentRepository.incrementLikeCount(commentId);
       return true;
     }
+  }
+
+  async getMyLikeFeed(
+    paginationDto: PaginationDto,
+    userId: string,
+  ): Promise<IPage<Like>> {
+    const [likes, totalCount] =
+      await this.likeRepository.getLikesByUserIdWithFeed(paginationDto, userId);
+
+    return {
+      data: likes,
+      totalCount,
+      pageInfo: {
+        currentPage: paginationDto.page,
+        totalPages: Math.ceil(totalCount / paginationDto.limit),
+        hasNextPage: paginationDto.page * paginationDto.limit < totalCount,
+      },
+    };
   }
 }
