@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CommentService } from './comment.service';
 import { FeedRepository } from 'src/feed/repo/feed.repository';
 import { CommentRepository } from './repo/comment.repository';
+import { User } from 'src/user/entities/user.entity';
+import { Feed } from 'src/feed/entities/feed.entity';
+import { Comment } from './entities/comment.entity';
 
 const feedMockRepository = () => ({
   getFeedByFeedIdAndIsPublic: jest.fn(),
@@ -41,14 +44,24 @@ describe('CommentService', () => {
 
   describe('createComment', () => {
     it('feed가 존재하면 comment를 생성하고 true를 반환한다.', async () => {
-      const user = { id: 'uuid1', username: 'username' };
-      const feedId = 'uuid2';
+      const user = new User({
+        id: 'uuid1',
+        email: 'email',
+        username: 'username',
+      });
+      const feed = new Feed({
+        id: 'uuid2',
+        content: 'content',
+        isPublic: true,
+      });
       const comment = 'comment';
 
-      feedRepository.getFeedByFeedIdAndIsPublic.mockResolvedValue({
-        feedId,
-      });
-      commentRepository.save.mockResolvedValue(comment);
+      feedRepository.getFeedByFeedIdAndIsPublic.mockResolvedValue(feed);
+      commentRepository.save.mockResolvedValue({ comment, user, feed });
+
+      const result = await service.createComment(user, comment, feed.id);
+
+      expect(result).toBe(true);
     });
   });
 });
