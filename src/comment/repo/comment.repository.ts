@@ -75,4 +75,11 @@ export class CommentRepository {
   async softRemove(comment: Comment): Promise<void> {
     await this.repository.softRemove(comment);
   }
+
+  async getCommentById(commentId: string): Promise<Comment> {
+    return await this.repository
+      .createQueryBuilder('comment')
+      .where('comment.id = :commentId', { commentId })
+      .getOne();
+  }
 }
