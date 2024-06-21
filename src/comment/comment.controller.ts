@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Param, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  Get,
+  Query,
+  Patch,
+} from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { User } from 'src/user/entities/user.entity';
@@ -17,7 +25,7 @@ export class CommentController {
     @Body('content') content: string,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return await this.commentService.createComment(user, content, feedId);
+    return await this.commentService.createComment({ user, content, feedId });
   }
 
   @Get('/:feedId')
@@ -32,5 +40,18 @@ export class CommentController {
       { page, limit, sort },
       feedId,
     );
+  }
+
+  @Patch('/:feedId')
+  async updateComment(
+    @Param('feedId') feedId: string,
+    @Body('content') content: string,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    return await this.commentService.updateComment({
+      feedId,
+      userId: user.id,
+      content,
+    });
   }
 }
