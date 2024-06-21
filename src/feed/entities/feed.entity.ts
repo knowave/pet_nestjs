@@ -1,6 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { BaseEntity } from 'src/common/base.entity';
+import { Like } from 'src/like/entities/like.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
@@ -23,6 +24,9 @@ export class Feed extends BaseEntity {
   @Column({ type: 'int', default: 0, comment: '조회수' })
   viewCount: number;
 
+  @Column({ type: 'int', default: 0, comment: '좋아요 수' })
+  likeCount: number;
+
   @ManyToOne(() => User, (user) => user.feeds, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
@@ -34,4 +38,10 @@ export class Feed extends BaseEntity {
     onUpdate: 'CASCADE',
   })
   comments: Comment[];
+
+  @OneToMany(() => Like, (like) => like.feed, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  likes: Like[];
 }

@@ -3,6 +3,7 @@ import { Comment } from 'src/comment/entities/comment.entity';
 import { BaseEntity } from 'src/common/base.entity';
 import { Feed } from 'src/feed/entities/feed.entity';
 import { Follow } from 'src/follow/entities/follow.entity';
+import { Like } from 'src/like/entities/like.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity()
@@ -97,4 +98,10 @@ export class User extends BaseEntity {
     onUpdate: 'CASCADE',
   })
   followings: Follow[];
+
+  @OneToMany(() => Like, (like) => like.user, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  likes: Like[];
 }
