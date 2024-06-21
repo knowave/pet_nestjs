@@ -45,4 +45,15 @@ export class CommentRepository {
     qb.offset(skip).limit(limit);
     return await qb.getManyAndCount();
   }
+
+  async getCommentByFeedIdAndUserId(
+    feedId: string,
+    userId: string,
+  ): Promise<Comment> {
+    return await this.repository
+      .createQueryBuilder('comment')
+      .where('comment.feedId = :feedId', { feedId })
+      .andWhere('comment.userId = :userId', { userId })
+      .getOne();
+  }
 }
