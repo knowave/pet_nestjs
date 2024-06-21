@@ -26,9 +26,11 @@ export class LikeService {
 
     if (isLike) {
       await this.likeRepository.softRemove(isLike);
+      await this.feedRepository.decrementLikeCount(feedId);
       return false;
     } else {
       await this.likeRepository.save(new Like({ feed, user }));
+      await this.feedRepository.incrementLikeCount(feedId);
       return true;
     }
   }
@@ -44,9 +46,11 @@ export class LikeService {
 
     if (isLike) {
       await this.likeRepository.softRemove(isLike);
+      await this.commentRepository.decrementLikeCount(commentId);
       return false;
     } else {
       await this.likeRepository.save(new Like({ comment, user }));
+      await this.commentRepository.incrementLikeCount(commentId);
       return true;
     }
   }
