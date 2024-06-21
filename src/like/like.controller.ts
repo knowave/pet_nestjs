@@ -1,42 +1,17 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Post, Param } from '@nestjs/common';
 import { LikeService } from './like.service';
-import { CreatePickDto } from './dto/create-pick.dto';
-import { UpdatePickDto } from './dto/update-pick.dto';
+import { CurrentUser } from 'src/common/decorators/user.decorator';
+import { User } from 'src/user/entities/user.entity';
 
 @Controller('pick')
 export class LikeController {
-  constructor(private readonly pickService: LikeService) {}
+  constructor(private readonly likeService: LikeService) {}
 
-  @Post()
-  create(@Body() createPickDto: CreatePickDto) {
-    return this.pickService.create(createPickDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.pickService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.pickService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePickDto: UpdatePickDto) {
-    return this.pickService.update(+id, updatePickDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.pickService.remove(+id);
+  @Post('/:feedId')
+  async feedLike(
+    @Param('feedId') feedId: string,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    return await this.likeService.feedLike(feedId, user);
   }
 }

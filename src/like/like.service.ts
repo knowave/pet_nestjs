@@ -1,26 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePickDto } from './dto/create-pick.dto';
-import { UpdatePickDto } from './dto/update-pick.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { LikeRepository } from './repo/like.repository';
+import { FeedRepository } from 'src/feed/repo/feed.repository';
+import { CommentRepository } from 'src/comment/repo/comment.repository';
+import { FEED_NOT_FOUND } from 'src/feed/error/feed.error';
+import { User } from 'src/user/entities/user.entity';
+import { Like } from './entities/like.entity';
 
 @Injectable()
 export class LikeService {
-  create(createPickDto: CreatePickDto) {
-    return 'This action adds a new pick';
-  }
+  constructor(
+    private readonly likeRepository: LikeRepository,
+    private readonly feedRepository: FeedRepository,
+    private readonly commentRepository: CommentRepository,
+  ) {}
 
-  findAll() {
-    return `This action returns all pick`;
-  }
+  async feedLike(feedId: string, user: User): Promise<boolean> {
+    const feed = await this.feedRepository.getFeedById(feedId);
+    const isLike = await this.likeRepository.getLikeByFeedIdAndUserId(
+      feedId,
+      user.id,
+    );
 
-  findOne(id: number) {
-    return `This action returns a #${id} pick`;
-  }
+    if (!feed) throw new NotFoundException(FEED_NOT_FOUND);
 
-  update(id: number, updatePickDto: UpdatePickDto) {
-    return `This action updates a #${id} pick`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} pick`;
+    if (isLike) {
+      await this.likeRepository.softRemove(isLike);
+      return false;
+    } else {
+      await this.likeRepository.save(new Like({ feed, user }));
+      return true;
+    }
   }
 }
