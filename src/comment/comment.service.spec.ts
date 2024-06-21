@@ -53,12 +53,12 @@ describe('CommentService', () => {
         content: 'content',
         isPublic: true,
       });
-      const comment = 'comment';
+      const content = 'content';
 
       feedRepository.getFeedByFeedIdAndIsPublic.mockResolvedValue(feed);
-      commentRepository.save.mockResolvedValue({ comment, user, feed });
+      commentRepository.save.mockResolvedValue({ content, user, feed });
 
-      const result = await service.createComment(user, comment, feed.id);
+      const result = await service.createComment(user, content, feed.id);
 
       expect(result).toBe(true);
     });

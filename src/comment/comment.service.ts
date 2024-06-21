@@ -12,14 +12,14 @@ export class CommentService {
     private readonly commentRepository: CommentRepository,
   ) {}
 
-  async createComment(user: User, comment: string, feedId: string) {
+  async createComment(user: User, content: string, feedId: string) {
     const feed = await this.feedRepository.getFeedByFeedIdAndIsPublic(feedId);
 
     if (!feed) throw new NotFoundException(FEED_NOT_FOUND);
 
     await this.commentRepository.save(
       new Comment({
-        comment,
+        content,
         feed,
         user,
       }),

@@ -10,9 +10,9 @@ export class CommentController {
   @Post('/:feedId')
   async createComment(
     @Param('feedId') feedId: string,
-    @Body('comment') comment: string,
+    @Body('content') content: string,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return await this.commentService.createComment(user, comment, feedId);
+    return await this.commentService.createComment(user, content, feedId);
   }
 }
