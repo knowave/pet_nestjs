@@ -30,7 +30,16 @@ export class FeedRepository {
   async getFeedByFeedIdAndIsPublic(feedId: string): Promise<Feed> {
     return await this.repository
       .createQueryBuilder('feed')
-      .innerJoinAndSelect('feed.user', 'user')
+      .innerJoin('feed.user', 'user')
+      .leftJoin('feed.comments', 'comment')
+      .innerJoin('comment.user', 'commentUser')
+      .addSelect(['user.id', 'user.username', 'user.profileImage'])
+      .addSelect(['comment.id', 'comment.content', 'comment.createdAt'])
+      .addSelect([
+        'commentUser.id',
+        'commentUser.username',
+        'commentUser.profileImage',
+      ])
       .where('feed.id = :feedId', { feedId })
       .andWhere('feed.isPublic = true')
       .getOne();
