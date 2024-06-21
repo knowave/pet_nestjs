@@ -82,4 +82,12 @@ export class CommentRepository {
       .where('comment.id = :commentId', { commentId })
       .getOne();
   }
+
+  async incrementLikeCount(commentId: string): Promise<void> {
+    await this.repository.increment({ id: commentId }, 'likeCount', 1);
+  }
+
+  async decrementLikeCount(commentId: string): Promise<void> {
+    await this.repository.decrement({ id: commentId }, 'likeCount', 1);
+  }
 }
